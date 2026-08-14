@@ -1,14 +1,14 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite it as below."
-title: "Engram: Persistent Knowledge Base MCP Server"
+title: "Inkwell: Persistent Knowledge Base MCP Server"
 type: software
 authors:
   - name: "Veronchenko"
-repository-code: "https://github.com/veronchenko/engram-memory"
-url: "https://hub.docker.com/r/foreigndmitryi/engram"
+repository-code: "https://github.com/veronchenko/inkwell-memory"
+url: "https://hub.docker.com/r/foreigndmitryi/inkwell-memory"
 license: MIT
-version: "0.12.1"
-date-released: "2026-08-01"
+version: "0.14.0"
+date-released: "2026-08-15"
 keywords:
   - mcp
   - model-context-protocol
@@ -19,7 +19,7 @@ keywords:
   - semantic-search
   - knowledge-base
 abstract: >
-  Engram is a self-hosted Model Context Protocol (MCP) server that gives
+  Inkwell is a self-hosted Model Context Protocol (MCP) server that gives
   AI agents persistent memory across sessions and projects. Markdown files
   serve as the source of truth, with a hybrid BM25 + local embedding search
   index and typed graph relations between entries.

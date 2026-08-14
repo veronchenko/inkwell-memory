@@ -1,5 +1,5 @@
 """
-SQLite backend tests for Engram.
+SQLite backend tests for Inkwell.
 
 Exercises the KnowledgeBase CRUD, search, tags, relations, and rebuild
 operations against the SQLite FTS5 backend.
@@ -33,7 +33,7 @@ from search_backend import SQLiteBackend
 def kb(tmp_path: Path) -> KnowledgeBase:
     """KnowledgeBase backed by SQLiteBackend."""
 
-    backend = SQLiteBackend(tmp_path / "index" / "engram.db")
+    backend = SQLiteBackend(tmp_path / "index" / "inkwell.db")
 
     # Initialized
     return KnowledgeBase(str(tmp_path), backend=backend)
@@ -1219,7 +1219,7 @@ class TestUsageStaleness:
         """
 
         backend = SQLiteBackend(
-            tmp_path / "index" / "engram.db", no_boost_types=frozenset({"hub"})
+            tmp_path / "index" / "inkwell.db", no_boost_types=frozenset({"hub"})
         )
         kb = KnowledgeBase(str(tmp_path), backend=backend)
 
@@ -1777,7 +1777,7 @@ class TestQueryLog:
         assert snapshot["average_recall_rank"] == 2
         assert snapshot["click_through_rate"] == 0.0
 
-    def test_sessions_touching_engram(self, kb: KnowledgeBase) -> None:
+    def test_sessions_touching_inkwell(self, kb: KnowledgeBase) -> None:
         """Distinct session_id count, across any tool."""
 
         kb._backend.log_query_event(
@@ -1790,4 +1790,4 @@ class TestQueryLog:
             ts="2026-08-05T00:00:00+00:00", session_id="s1", tool="recall", hit=True,
         )
 
-        assert kb.get_analytics_snapshot()["sessions_touching_engram"] == 2
+        assert kb.get_analytics_snapshot()["sessions_touching_inkwell"] == 2

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""PreToolUse hook: refuse mcp__engram__remember until search/recall ran.
+"""PreToolUse hook: refuse mcp__inkwell__remember until search/recall ran.
 
-Fires on mcp__engram__search, mcp__engram__recall, and mcp__engram__remember
+Fires on mcp__inkwell__search, mcp__inkwell__recall, and mcp__inkwell__remember
 (matcher covers all three so one script handles both sides of the gate).
 On search/recall it marks the session state "searched". On remember it
 checks that flag: missing -> deny the tool call and tell the model to
@@ -9,7 +9,7 @@ search first. This is a session-level gate (any prior search/recall in the
 session satisfies it) — it does not check topical relevance between the
 search and the remember.
 
-On a successful remember it also resets engram_stop_prompt.py's counters
+On a successful remember it also resets inkwell_stop_prompt.py's counters
 (a remember satisfies whichever trigger was accumulating) and bumps
 remembers_count / last_remember_ts, which the statusline script reads —
 all via the shared per-session state in _session_state.py.
@@ -28,11 +28,11 @@ except Exception:
         pass
 import _session_state as state
 
-SEARCH_TOOLS = {"mcp__engram__search", "mcp__engram__recall"}
-REMEMBER_TOOL = "mcp__engram__remember"
+SEARCH_TOOLS = {"mcp__inkwell__search", "mcp__inkwell__recall"}
+REMEMBER_TOOL = "mcp__inkwell__remember"
 
 DENY_REASON = (
-    "No mcp__engram__search or mcp__engram__recall call has happened yet this "
+    "No mcp__inkwell__search or mcp__inkwell__recall call has happened yet this "
     "session. Search or recall first, then call remember — writing a memory "
     "without checking what's already known risks duplicate or contradicting "
     "entries. If you already searched, this is a fresh session state issue; "

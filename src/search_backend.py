@@ -1,5 +1,5 @@
 """
-Hybrid search backend for Engram — SQLite FTS5 + local semantic embeddings.
+Hybrid search backend for Inkwell — SQLite FTS5 + local semantic embeddings.
 
 Full-text search with Porter stemming, graph relation indexing, and tag
 filtering (via SQLite's built-in sqlite3 module), fused with cosine
@@ -41,7 +41,7 @@ from config import (
 )
 from schema import DEFAULT_EDGE, DEFAULT_EDGES
 
-logger = logging.getLogger("engram")
+logger = logging.getLogger("inkwell")
 
 _model_cache: dict[str, StaticModel] = {}
 
@@ -195,7 +195,7 @@ CREATE INDEX IF NOT EXISTS idx_relations_target ON relations(target_id)
 """
 
 # One row per search/recall/remember tool call — the usage-analytics trace
-# behind /api/analytics. Distinct from the optional ENGRAM_QUERY_LOG JSONL
+# behind /api/analytics. Distinct from the optional INKWELL_QUERY_LOG JSONL
 # file (log_query() in server.py), which keeps feeding
 # scripts/eval_retrieval.py unchanged; this is a separate write path, not a
 # replacement, and deliberately does not touch access_count/last_accessed
@@ -234,7 +234,7 @@ class SQLiteBackend:
     Args:
         db_path: Path to the SQLite database file.
         embedding_model: HuggingFace hub id of the Model2Vec model to use
-            for semantic search. Defaults to ENGRAM_EMBEDDING_MODEL env
+            for semantic search. Defaults to INKWELL_EMBEDDING_MODEL env
             var, falling back to DEFAULT_EMBEDDING_MODEL.
     """
 
@@ -270,7 +270,7 @@ class SQLiteBackend:
         self._db_path = Path(db_path)
         self._db_path.parent.mkdir(parents=True, exist_ok=True)
         self._embedding_model = embedding_model or os.environ.get(
-            "ENGRAM_EMBEDDING_MODEL", DEFAULT_EMBEDDING_MODEL
+            "INKWELL_EMBEDDING_MODEL", DEFAULT_EMBEDDING_MODEL
         )
         self._no_boost_types = no_boost_types
         self._allowed_edges = allowed_edges
@@ -1750,7 +1750,7 @@ class SQLiteBackend:
                 (stale_cutoff,),
             ).fetchone()[0]
 
-            sessions_touching_engram = conn.execute(
+            sessions_touching_inkwell = conn.execute(
                 "SELECT COUNT(DISTINCT session_id) FROM query_log"
             ).fetchone()[0]
 
@@ -1771,6 +1771,6 @@ class SQLiteBackend:
                 "stale": stale_accessed,
                 "total_entries": total_entries,
             },
-            "sessions_touching_engram": sessions_touching_engram,
+            "sessions_touching_inkwell": sessions_touching_inkwell,
             **session_metrics,
         }

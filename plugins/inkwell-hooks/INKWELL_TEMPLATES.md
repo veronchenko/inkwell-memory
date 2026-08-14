@@ -1,4 +1,4 @@
-<!-- Source of truth: plugins/engram-hooks/ in the engram_memory repo. The ~/.claude copy is installed from here — edit the plugin copy, then re-install. -->
+<!-- Source of truth: plugins/inkwell-hooks/ in the inkwell_memory repo. The ~/.claude copy is installed from here — edit the plugin copy, then re-install. -->
 
 | type | Use for | part_of |
 |---|---|---|

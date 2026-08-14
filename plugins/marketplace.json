@@ -1,16 +1,16 @@
 {
-  "name": "engram-memory",
+  "name": "inkwell-memory",
   "interface": {
-    "displayName": "Engram Memory"
+    "displayName": "Inkwell Memory"
   },
   "plugins": [
     {
-      "name": "engram-hooks",
+      "name": "inkwell-hooks",
       "source": {
         "source": "local",
-        "path": "./engram-hooks"
+        "path": "./inkwell-hooks"
       },
-      "description": "Nudges Codex to actually use the Engram MCP memory server — search before starting work, and remember non-trivial changes before finishing.",
+      "description": "Nudges Codex to actually use the Inkwell MCP memory server — search before starting work, and remember non-trivial changes before finishing.",
       "policy": {
         "installation": "AVAILABLE",
         "authentication": "ON_INSTALL"

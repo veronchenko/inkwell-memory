@@ -1,15 +1,15 @@
 """
-Engram multi-tenant web app — merges MCP, the dashboard, and the admin UI
+Inkwell multi-tenant web app — merges MCP, the dashboard, and the admin UI
 into one ASGI app served by a single uvicorn process.
 
-Only used when ENGRAM_MULTI_TENANT=1 (see server.py's _run_multi_tenant).
+Only used when INKWELL_MULTI_TENANT=1 (see server.py's _run_multi_tenant).
 Single-tenant/stdio deployments never import this module and never pay
 for the extra routes (login/admin/dashboard mount).
 
 Route layout:
 - POST /login, POST /logout — session-cookie login, team key or admin key.
 - GET/POST /admin, /admin/teams[...] — htmx admin UI, admin session only.
-- /admin/api/* — the pre-existing bearer-token JSON admin API (engram CLI).
+- /admin/api/* — the pre-existing bearer-token JSON admin API (inkwell CLI).
 - /mcp — the MCP streamable-http app (its own bearer-token auth, per team).
 - / (mounted last, catch-all) — the dashboard, tenant-resolved via session.
 """
@@ -129,7 +129,7 @@ def build_multi_tenant_app(
         authorization_servers=[AnyHttpUrl(args.public_url)],
         base_url=args.public_url,
     )
-    mcp = FastMCP(name="Engram", auth=auth)
+    mcp = FastMCP(name="Inkwell", auth=auth)
     register_tools(mcp, registry.resolve_current, logger, schema)
     # path="/" keeps the public endpoint at exactly "/mcp" once mounted
     # under the "/mcp" prefix below, instead of "/mcp/mcp".
@@ -166,7 +166,7 @@ def build_multi_tenant_app(
         async with mcp_asgi.lifespan(mcp_asgi):
             yield
 
-    app = FastAPI(title="Engram", lifespan=lifespan)
+    app = FastAPI(title="Inkwell", lifespan=lifespan)
     app.add_middleware(
         SessionMiddleware,
         secret_key=secrets.token_urlsafe(32),

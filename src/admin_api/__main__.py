@@ -1,5 +1,5 @@
 """
-Engram admin API — process entry point.
+Inkwell admin API — process entry point.
 
 Runs the team-registry FastAPI app (see admin_api/app.py) on its own
 loopback host/port, backed by <data_path>/admin.db. No side effects on
@@ -30,7 +30,7 @@ def main() -> None:
 
     args = parse_args()
 
-    logger = logging.getLogger("engram")
+    logger = logging.getLogger("inkwell")
     logger.setLevel(logging.INFO)
     if not logger.handlers:
         handler = logging.StreamHandler()
@@ -48,7 +48,7 @@ def main() -> None:
 
     app = create_app(store, args.api_key)
 
-    logger.info("Starting Engram admin API on %s:%d", args.host, args.port)
+    logger.info("Starting Inkwell admin API on %s:%d", args.host, args.port)
     uvicorn.run(app, host=args.host, port=args.port, log_level="info")
 
 

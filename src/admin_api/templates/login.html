@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Engram — log in</title>
+  <title>Inkwell — log in</title>
   <link rel="stylesheet" href="/admin/static/admin.css">
   <style>
     body { display: flex; align-items: center; justify-content: center; height: 100vh; padding: 0; }
@@ -24,7 +24,7 @@
 </head>
 <body>
   <form class="login-form" method="post" action="/login">
-    <h1>Engram</h1>
+    <h1>Inkwell</h1>
     {% if error %}<p class="error" role="alert">{{ error }}</p>{% endif %}
     <label for="f-key" class="sr-only">API key</label>
     <input id="f-key" type="password" name="key" placeholder="API key" required autofocus>

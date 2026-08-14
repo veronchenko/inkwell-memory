@@ -184,7 +184,7 @@ class TestRunDoctor:
     def test_tag_type_collision(self, schema: Schema) -> None:
         """A tag sharing a name with a type is reported."""
 
-        entry = _entry(tags=["diagnostic", "engram_memory"])
+        entry = _entry(tags=["diagnostic", "inkwell_memory"])
 
         report = run_doctor([entry], schema)
 
@@ -344,7 +344,7 @@ class TestCleanupCandidate:
     """Entries flagged for review after a long read-free stretch.
 
     Ranking boost from access_count was removed after an eval A/B showed
-    it net-harmful to search quality (see the engram idea entry); usage
+    it net-harmful to search quality (see the inkwell idea entry); usage
     counters are kept only as this opt-in, non-blocking cleanup signal.
     """
 

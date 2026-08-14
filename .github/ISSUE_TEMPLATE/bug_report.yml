@@ -1,5 +1,5 @@
 name: Bug Report
-description: Report a problem with Engram
+description: Report a problem with Inkwell
 labels: ["bug"]
 body:
   - type: textarea
@@ -23,7 +23,7 @@ body:
   - type: input
     id: version
     attributes:
-      label: Engram version
+      label: Inkwell version
       description: See `VERSION` file or the Docker image tag you're running
     validations:
       required: true

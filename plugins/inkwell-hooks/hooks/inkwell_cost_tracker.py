@@ -7,8 +7,8 @@ calls that report their own cost (currently Agent-tool subagent calls), so
 this fires on every PostToolUse event but is a no-op whenever those fields
 are absent. Accumulates into the same per-session state file the other hooks
 in this plugin share (_session_state.py: tokens_in, tokens_out, cost_usd),
-so engram_statusline.py can surface running cost alongside the existing
-counters. Local-only in v1 (kb://b47cdbc9) — no join against Engram's own
+so inkwell_statusline.py can surface running cost alongside the existing
+counters. Local-only in v1 (kb://b47cdbc9) — no join against Inkwell's own
 query_log, no network call.
 """
 

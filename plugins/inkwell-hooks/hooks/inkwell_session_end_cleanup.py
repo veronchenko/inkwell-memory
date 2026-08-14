@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """SessionEnd hook: delete this session's hook state file.
 
-engram_stop_prompt.py, engram_change_tracker.py, and engram_remember_gate.py
+inkwell_stop_prompt.py, inkwell_change_tracker.py, and inkwell_remember_gate.py
 all persist per-session counters/flags via the shared _session_state.py
 (one JSON file per session under the system temp dir — see its docstring).
 SessionEnd hooks can't block session termination or talk to Claude, only

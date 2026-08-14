@@ -1,12 +1,12 @@
 #!/bin/sh
-# Multi-tenant mode (ENGRAM_MULTI_TENANT=1) always runs on a network
+# Multi-tenant mode (INKWELL_MULTI_TENANT=1) always runs on a network
 # transport, never stdio, so it doesn't need the stdin-preservation dance
 # below — server.py itself builds one merged ASGI app (MCP + dashboard +
 # admin UI, see src/app.py) and serves it as a single process; there is
 # nothing else for this script to start or supervise.
 #
 # Single-tenant mode (default): starts only the MCP server (backend).
-# Set ENGRAM_ENABLE_DASHBOARD to a truthy value (1/true/yes) to also start
+# Set INKWELL_ENABLE_DASHBOARD to a truthy value (1/true/yes) to also start
 # the dashboard (API + frontend) as a second process. Backgrounding a
 # command with `&` in this shell closes its stdin (redirects to /dev/null)
 # unless the real stdin is explicitly preserved first — otherwise a stdio
@@ -19,12 +19,12 @@
 # usage even with the dashboard enabled.
 set -e
 
-case "$ENGRAM_MULTI_TENANT" in
+case "$INKWELL_MULTI_TENANT" in
     1|true|TRUE|yes|YES)
         exec python server.py
         ;;
     *)
-        case "$ENGRAM_ENABLE_DASHBOARD" in
+        case "$INKWELL_ENABLE_DASHBOARD" in
             1|true|TRUE|yes|YES)
                 exec 3<&0
                 python server.py <&3 &

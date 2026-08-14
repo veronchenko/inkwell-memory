@@ -12,7 +12,7 @@ the packaged one — partially overridden types would be a bug class with no
 benefit. The schema is read once at startup because `entry_type` is exposed
 as an enum in the MCP tool signature, so editing it requires a restart.
 
-The companion document `ENGRAM_TEMPLATES.md` is a hand-written spec for the
+The companion document `INKWELL_TEMPLATES.md` is a hand-written spec for the
 LLM (wording, examples, type-choice nuance) and is deliberately NOT
 generated from this file, nor this file from it.
 """
@@ -27,7 +27,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Final
 
-logger = logging.getLogger("engram")
+logger = logging.getLogger("inkwell")
 
 # Filename looked up both in the data path and next to this module
 SCHEMA_FILENAME: Final[str] = "schema.json"

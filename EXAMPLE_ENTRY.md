@@ -3,7 +3,7 @@ id: 3f9c2e1a-7b44-4c3a-9e2d-1a2b3c4d5e6f
 title: Example Entry — demonstrates the entry file format
 tags:
 - snippet
-- engram_memory
+- inkwell_memory
 type: snippet
 resource: kb://3f9c2e1a-7b44-4c3a-9e2d-1a2b3c4d5e6f
 ---
@@ -25,7 +25,7 @@ Example entry body content (the file body is plain Markdown, written however you
 ### Links (graph relations)
 Links of the form `[label](kb://<uuid>#<type>)` in the body are graph edges. Without `#type`, the relation type defaults to `related`.
 
-Example: related to [Engram — Persistent Knowledge Base MCP Server](kb://b39a46a0-65ea-4bda-a4d4-3ebe395bfccd#hub).
+Example: related to [Inkwell — Persistent Knowledge Base MCP Server](kb://b39a46a0-65ea-4bda-a4d4-3ebe395bfccd#hub).
 
 ### Writing to disk
 Written atomically: first to a temporary `*.md.tmp`, then `rename()`d to the target `<id>.md` — so a failed write (disk full, no permissions) never leaves a corrupt file.

@@ -2,10 +2,10 @@
 """PostToolUse hook: increment the per-session change-counter after a real edit.
 
 Fires on Edit, Write, NotebookEdit unconditionally, and on Bash only when the
-command looks like `git commit`. engram_stop_prompt.py reads this counter and
-blocks Stop once it crosses ENGRAM_CHANGE_THRESHOLD file edits since the last
-mcp__engram__remember call — engram_remember_gate.py resets it back to zero
-on every successful remember, and engram_stop_prompt.py resets it whenever
+command looks like `git commit`. inkwell_stop_prompt.py reads this counter and
+blocks Stop once it crosses INKWELL_CHANGE_THRESHOLD file edits since the last
+mcp__inkwell__remember call — inkwell_remember_gate.py resets it back to zero
+on every successful remember, and inkwell_stop_prompt.py resets it whenever
 either Stop trigger fires. Research/web tools are deliberately not counted.
 """
 

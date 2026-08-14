@@ -1,5 +1,5 @@
 """
-Engram dashboard — FastAPI presentation layer over KnowledgeBase.
+Inkwell dashboard — FastAPI presentation layer over KnowledgeBase.
 
 Thin wrappers only: every endpoint delegates straight to KnowledgeBase
 methods, the same ones server.py's MCP tools call, so remember/delete
@@ -53,7 +53,7 @@ def create_app(kb_resolver: Callable[[Request], KnowledgeBase]) -> FastAPI:
         Configured FastAPI application.
     """
 
-    app = FastAPI(title="Engram Dashboard")
+    app = FastAPI(title="Inkwell Dashboard")
 
     def _check_type(kb: KnowledgeBase, entry_type: str) -> None:
         """

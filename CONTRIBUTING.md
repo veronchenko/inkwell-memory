@@ -1,6 +1,6 @@
-# Contributing to Engram
+# Contributing to Inkwell
 
-Thanks for considering a contribution. Engram is a small, opinionated MCP server — please read `CLAUDE.md` first for the architecture and conventions before opening a PR; it documents the layout, testing setup, and known gotchas in more detail than this file will.
+Thanks for considering a contribution. Inkwell is a small, opinionated MCP server — please read `CLAUDE.md` first for the architecture and conventions before opening a PR; it documents the layout, testing setup, and known gotchas in more detail than this file will.
 
 ## Reporting bugs
 
@@ -21,9 +21,9 @@ Open a GitHub issue with:
 Tests run in a separate Docker image, built from the production image:
 
 ```bash
-docker build -t engram .
-docker build -f tests/Dockerfile -t engram-test .
-docker run --rm engram-test
+docker build -t inkwell .
+docker build -f tests/Dockerfile -t inkwell-test .
+docker run --rm inkwell-test
 ```
 
 ## Pull requests

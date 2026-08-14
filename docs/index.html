@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Engram — Persistent Memory MCP Server for AI Agents</title>
-<meta name="description" content="Engram is a self-hosted Model Context Protocol (MCP) server that gives AI agents persistent memory. Markdown as source of truth, hybrid BM25 + embedding search, typed graph relations.">
+<title>Inkwell — Persistent Memory MCP Server for AI Agents</title>
+<meta name="description" content="Inkwell is a self-hosted Model Context Protocol (MCP) server that gives AI agents persistent memory. Markdown as source of truth, hybrid BM25 + embedding search, typed graph relations.">
 <link rel="icon" href="data:,">
 <style>
   :root{
@@ -77,15 +77,15 @@
   <div class="wrap">
     <div class="badges">
       <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="MIT License">
-      <img src="https://img.shields.io/docker/pulls/foreigndmitryi/engram" alt="Docker Pulls">
+      <img src="https://img.shields.io/docker/pulls/foreigndmitryi/inkwell-memory" alt="Docker Pulls">
       <img src="https://img.shields.io/badge/python-3.12%2B-blue" alt="Python 3.12+">
     </div>
-    <h1>Engram</h1>
+    <h1>Inkwell</h1>
     <p class="tagline">A self-hosted <a href="https://modelcontextprotocol.io/" target="_blank" rel="noopener">Model Context Protocol</a> server that gives AI agents persistent memory across sessions and projects. Markdown files as source of truth, hybrid keyword + semantic search, typed graph relations.</p>
     <div class="cta">
-      <a class="btn btn-primary" href="https://github.com/veronchenko/engram-memory">View on GitHub</a>
-      <a class="btn btn-secondary" href="https://hub.docker.com/r/foreigndmitryi/engram">Docker Hub</a>
-      <a class="btn btn-secondary" href="https://github.com/veronchenko/engram-memory#quick-start">Quick Start</a>
+      <a class="btn btn-primary" href="https://github.com/veronchenko/inkwell-memory">View on GitHub</a>
+      <a class="btn btn-secondary" href="https://hub.docker.com/r/foreigndmitryi/inkwell-memory">Docker Hub</a>
+      <a class="btn btn-secondary" href="https://github.com/veronchenko/inkwell-memory#quick-start">Quick Start</a>
     </div>
   </div>
 </header>
@@ -93,8 +93,8 @@
 <section>
   <div class="wrap">
     <h2>Concept</h2>
-    <p>Agent conversations end and take their context with them. Engram is the piece that survives: a knowledge base an agent searches <em>before</em> acting and writes to <em>after</em> resolving something non-obvious, so the next session — same project or a different one — starts with what was already learned instead of re-deriving it.</p>
-    <p>It deliberately stores <strong>zero discoverable information</strong>. If a fact can be pulled from code, git history, config files, or existing docs, it does not belong in Engram. What belongs: a decision and the alternatives it ruled out, a bug's root cause and fix, a procedure learned the hard way, a preference stated once that should hold from then on.</p>
+    <p>Agent conversations end and take their context with them. Inkwell is the piece that survives: a knowledge base an agent searches <em>before</em> acting and writes to <em>after</em> resolving something non-obvious, so the next session — same project or a different one — starts with what was already learned instead of re-deriving it.</p>
+    <p>It deliberately stores <strong>zero discoverable information</strong>. If a fact can be pulled from code, git history, config files, or existing docs, it does not belong in Inkwell. What belongs: a decision and the alternatives it ruled out, a bug's root cause and fix, a procedure learned the hard way, a preference stated once that should hold from then on.</p>
   </div>
 </section>
 
@@ -141,7 +141,7 @@
 <section>
   <div class="wrap">
     <h2>Measured against a plain Markdown wiki</h2>
-    <p class="muted">Same knowledge base, browsed with <code>Read</code>/<code>Grep</code>/<code>Glob</code> vs. searched with Engram — 32 questions over 5,070 entries, equivalent fact coverage:</p>
+    <p class="muted">Same knowledge base, browsed with <code>Read</code>/<code>Grep</code>/<code>Glob</code> vs. searched with Inkwell — 32 questions over 5,070 entries, equivalent fact coverage:</p>
     <div class="stat-grid">
       <div class="stat"><div class="num">-44%</div><div class="label">Tool calls</div></div>
       <div class="stat"><div class="num">-35%</div><div class="label">Total tokens</div></div>
@@ -156,7 +156,7 @@
   <div class="wrap">
     <h2>Comparison</h2>
     <table>
-      <thead><tr><th></th><th>Engram</th><th>Mem0</th><th>Zep / Graphiti</th><th>LangMem</th></tr></thead>
+      <thead><tr><th></th><th>Inkwell</th><th>Mem0</th><th>Zep / Graphiti</th><th>LangMem</th></tr></thead>
       <tbody>
         <tr><td>Source of truth</td><td>Markdown files on disk</td><td>Vector DB / managed API</td><td>Temporal knowledge graph</td><td>Vector store (LangChain)</td></tr>
         <tr><td>Search</td><td>BM25 + local embeddings (RRF)</td><td>Vector similarity</td><td>Graph traversal + embeddings</td><td>Vector similarity</td></tr>
@@ -181,18 +181,18 @@
   <div class="wrap">
     <h2>Quick start</h2>
     <p class="muted">stdio — your agent manages the server. Recommended for Claude Code, ChatGPT Desktop, Cursor.</p>
-    <pre><code>claude mcp add --transport stdio engram -- \
-  docker run -i --rm -v ./knowledge:/knowledge foreigndmitryi/engram</code></pre>
-    <p class="muted">See the <a href="https://github.com/veronchenko/engram-memory#quick-start">full README</a> for SSE, streamable-http, and multi-tenant setups.</p>
+    <pre><code>claude mcp add --transport stdio inkwell -- \
+  docker run -i --rm -v ./knowledge:/knowledge foreigndmitryi/inkwell-memory</code></pre>
+    <p class="muted">See the <a href="https://github.com/veronchenko/inkwell-memory#quick-start">full README</a> for SSE, streamable-http, and multi-tenant setups.</p>
   </div>
 </section>
 
 <footer>
   <div class="wrap">
     <div>
-      <a href="https://github.com/veronchenko/engram-memory">GitHub</a>·
-      <a href="https://hub.docker.com/r/foreigndmitryi/engram">Docker Hub</a>·
-      <a href="https://github.com/veronchenko/engram-memory/blob/main/LICENSE">MIT License</a>
+      <a href="https://github.com/veronchenko/inkwell-memory">GitHub</a>·
+      <a href="https://hub.docker.com/r/foreigndmitryi/inkwell-memory">Docker Hub</a>·
+      <a href="https://github.com/veronchenko/inkwell-memory/blob/main/LICENSE">MIT License</a>
     </div>
   </div>
 </footer>

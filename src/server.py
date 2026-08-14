@@ -1,5 +1,5 @@
 """
-Engram — persistent knowledge base MCP server with hybrid search.
+Inkwell — persistent knowledge base MCP server with hybrid search.
 
 Provides MCP tools for storing, searching, and managing knowledge entries.
 Entries are Markdown files with YAML frontmatter, indexed by SQLite FTS5
@@ -8,7 +8,7 @@ Reciprocal Rank Fusion.
 
 Transport: stdio by default; sse/streamable-http also supported (--transport).
 Logs go to stderr because stdout/stdin carry the stdio protocol.
-Data: Markdown files in --data-path/entries/, search index in --data-path/index/engram.db.
+Data: Markdown files in --data-path/entries/, search index in --data-path/index/inkwell.db.
 """
 
 from __future__ import annotations
@@ -49,7 +49,7 @@ def log_query(tool: str, **fields: object) -> None:
     """
     Append a retrieval event to the JSONL query log, if enabled.
 
-    Controlled by the ENGRAM_QUERY_LOG env var (a file path); a no-op
+    Controlled by the INKWELL_QUERY_LOG env var (a file path); a no-op
     when unset. Used by eval harnesses to get ground truth on which
     entries a session actually retrieved. Failures never break the
     calling tool.
@@ -72,7 +72,7 @@ def log_query(tool: str, **fields: object) -> None:
         with open(log_path, "a", encoding="utf-8") as f:
             f.write(json.dumps(record, ensure_ascii=False) + "\n")
     except OSError as exc:
-        logging.getLogger("engram").warning("query log write failed: %s", exc)
+        logging.getLogger("inkwell").warning("query log write failed: %s", exc)
 
 
 def parse_args() -> ServerSettings:
@@ -94,7 +94,7 @@ def setup_logging() -> logging.Logger:
     transport). Use `docker logs` to read them.
     """
 
-    log = logging.getLogger("engram")
+    log = logging.getLogger("inkwell")
     log.setLevel(logging.INFO)
 
     formatter = logging.Formatter(
@@ -603,7 +603,7 @@ class TeamRegistry:
             kb = self._cache.get(folder)
             if kb is None:
                 team_path = self._teams_root / folder
-                index_path = team_path / "index" / "engram.db"
+                index_path = team_path / "index" / "inkwell.db"
                 backend = SQLiteBackend(index_path, embedding_model=self._embedding_model)
                 backend.warm_up()
                 kb = KnowledgeBase(str(team_path), backend=backend, schema=self._schema)
@@ -660,7 +660,7 @@ def main() -> None:
 
     logger.info("Initializing knowledge base from %s", args.data_path)
     schema = load_schema(args.data_path)
-    index_path = Path(args.data_path) / "index" / "engram.db"
+    index_path = Path(args.data_path) / "index" / "inkwell.db"
     backend = SQLiteBackend(index_path, embedding_model=args.embedding_model)
     backend.warm_up()
     kb = KnowledgeBase(args.data_path, backend=backend, schema=schema)
@@ -677,11 +677,11 @@ def main() -> None:
         if port != args.port:
             logger.info("Port %d in use, using free port %d instead", args.port, port)
 
-    mcp = FastMCP(name="Engram")
+    mcp = FastMCP(name="Inkwell")
 
     register_tools(mcp, kb, logger, schema)
 
-    logger.info("Starting Engram (%s transport)", args.transport)
+    logger.info("Starting Inkwell (%s transport)", args.transport)
     # --transport is argparse-restricted to this Literal's members (see
     # config.parse_server_args's choices=); ServerSettings itself keeps
     # the broader `str` since it's resolved from a CLI/env string.
@@ -696,7 +696,7 @@ def _run_multi_tenant(args: ServerSettings, logger: logging.Logger) -> None:
     """
     Start the MCP server in multi-tenant mode — one process serving
     several teams, routed per request by bearer token (TeamRegistry +
-    TeamTokenVerifier). See engram_memory decision on multi-tenant VPS
+    TeamTokenVerifier). See inkwell_memory decision on multi-tenant VPS
     deployment for the full design.
     """
 
@@ -708,13 +708,13 @@ def _run_multi_tenant(args: ServerSettings, logger: logging.Logger) -> None:
         )
     if not args.public_url:
         raise SystemExit(
-            "--multi-tenant requires --public-url/ENGRAM_PUBLIC_URL — the "
+            "--multi-tenant requires --public-url/INKWELL_PUBLIC_URL — the "
             "externally reachable base URL used as the OAuth resource-"
             "server identifier for token validation"
         )
     if not args.admin_api_key:
         raise SystemExit(
-            "--multi-tenant requires --admin-api-key/ENGRAM_ADMIN_API_KEY — "
+            "--multi-tenant requires --admin-api-key/INKWELL_ADMIN_API_KEY — "
             "the merged admin UI and JSON API refuse to start unauthenticated"
         )
 
@@ -741,7 +741,7 @@ def _run_multi_tenant(args: ServerSettings, logger: logging.Logger) -> None:
     )
 
     logger.info(
-        "Starting Engram (multi-tenant, merged MCP+dashboard+admin) on %s:%d",
+        "Starting Inkwell (multi-tenant, merged MCP+dashboard+admin) on %s:%d",
         args.host,
         port,
     )

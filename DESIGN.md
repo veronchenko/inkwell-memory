@@ -1,6 +1,6 @@
 ---
-name: Engram Dashboard
-description: Dark instrument panel for browsing and editing the Engram knowledge graph
+name: Inkwell Dashboard
+description: Dark instrument panel for browsing and editing the Inkwell knowledge graph
 colors:
   bg: "oklch(0.16 0.018 260)"
   surface: "oklch(0.205 0.018 260)"
@@ -86,13 +86,13 @@ components:
     padding: "12px 16px"
 ---
 
-# Design System: Engram Dashboard
+# Design System: Inkwell Dashboard
 
 ## 1. Overview
 
 **Creative North Star: "The Control Room"**
 
-The Engram Dashboard is a dark instrument panel for watching and steering a live knowledge graph, not a marketing surface or a consumer app. Every element on screen is a readout or a control: the canvas is the main viewport, the topbar is a strip of instruments (search, filter, status spinner), the side panel is a form for direct edits. Nothing exists to be admired — it exists to be read at a glance and acted on in seconds, matching PRODUCT.md's "technical and minimal... every pixel earns its place" personality.
+The Inkwell Dashboard is a dark instrument panel for watching and steering a live knowledge graph, not a marketing surface or a consumer app. Every element on screen is a readout or a control: the canvas is the main viewport, the topbar is a strip of instruments (search, filter, status spinner), the side panel is a form for direct edits. Nothing exists to be admired — it exists to be read at a glance and acted on in seconds, matching PRODUCT.md's "technical and minimal... every pixel earns its place" personality.
 
 This system explicitly rejects the generic-SaaS-admin template feel named in PRODUCT.md's anti-references: no bootstrap-y card grids, no dashboard-in-a-box CRUD-table-with-sidebar layout, no elements that exist to look impressive rather than to work.
 

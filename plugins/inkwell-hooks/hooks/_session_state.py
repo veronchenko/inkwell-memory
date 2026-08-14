@@ -1,10 +1,10 @@
-"""Shared per-session state store for the Engram hooks in this folder.
+"""Shared per-session state store for the Inkwell hooks in this folder.
 
-Replaces the earlier one-counter-per-file scheme (engram_change_count_*.txt,
-engram_stop_count_*.txt, engram_searched_*.txt) with a single JSON file per
-session under the system temp dir, so a hook that needs more than one field
+Replaces the earlier one-counter-per-file scheme (a separate change_count /
+stop_count / searched text file each) with a single JSON file per session
+under the system temp dir, so a hook that needs more than one field
 (the statusline script wants remembers_count and last_remember_ts alongside
-the existing counters, engram_cost_tracker.py wants tokens_in/tokens_out/
+the existing counters, inkwell_cost_tracker.py wants tokens_in/tokens_out/
 cost_usd) doesn't need yet another file.
 
 Each hook invocation is a fresh process with no memory of prior calls, so
@@ -32,7 +32,7 @@ DEFAULTS = {
 
 
 def _path(session_id: str) -> str:
-    return os.path.join(tempfile.gettempdir(), f"engram_session_{session_id}.json")
+    return os.path.join(tempfile.gettempdir(), f"inkwell_session_{session_id}.json")
 
 
 def load(session_id: str) -> dict:

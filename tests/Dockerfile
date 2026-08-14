@@ -1,11 +1,11 @@
 # Test image — built FROM the already-built production image, never part
 # of the default `docker build .` (which only ever produces production).
 #
-# Build:  docker build -t engram .
-#         docker build -f tests/Dockerfile -t engram-test .
-# Run:    docker run --rm engram-test
+# Build:  docker build -t inkwell .
+#         docker build -f tests/Dockerfile -t inkwell-test .
+# Run:    docker run --rm inkwell-test
 
-FROM engram:latest
+FROM inkwell:latest
 
 USER root
 
@@ -21,9 +21,9 @@ RUN uv export --locked --only-group test --no-emit-project --no-hashes -o /tmp/r
 # at it instead of restructuring the production image layout.
 RUN ln -s /app /app/src
 COPY tests/ ./tests/
-RUN chown engram:engram /app /app/tests
+RUN chown inkwell:inkwell /app /app/tests
 
-USER engram
+USER inkwell
 
 ENTRYPOINT ["python", "-m", "pytest"]
 CMD ["tests/", "-v"]

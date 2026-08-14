@@ -33,7 +33,7 @@ from server import parse_args, register_tools, setup_logging
 
 @pytest.fixture()
 def _setup(tmp_path: Path) -> tuple[FastMCP, KnowledgeBase, logging.Logger]:
-    """Provide a FastMCP instance with tools registered against a temp Engram."""
+    """Provide a FastMCP instance with tools registered against a temp Inkwell."""
 
     kb = KnowledgeBase(str(tmp_path))
     mcp = FastMCP(name="test")
@@ -299,9 +299,9 @@ class TestParseArgs:
     def test_parse_args_defaults(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """Default values are applied when no CLI args are provided."""
 
-        # Clear any ENGRAM_* env vars that could interfere
+        # Clear any INKWELL_* env vars that could interfere
         for key in list(sys.modules.get("os", __import__("os")).environ):
-            if key.startswith("ENGRAM_"):
+            if key.startswith("INKWELL_"):
                 monkeypatch.delenv(key, raising=False)
 
         monkeypatch.setattr("sys.argv", ["server.py"])
@@ -341,7 +341,7 @@ class TestSetupLogging:
         logger = setup_logging()
 
         assert isinstance(logger, logging.Logger)
-        assert logger.name == "engram"
+        assert logger.name == "inkwell"
         assert logger.level == logging.INFO
         assert len(logger.handlers) >= 1
 
@@ -1100,7 +1100,7 @@ class TestPartOfViaMcp:
 
 
 class TestQueryLog:
-    """ENGRAM_QUERY_LOG JSONL logging on search/recall."""
+    """INKWELL_QUERY_LOG JSONL logging on search/recall."""
 
     def test_search_and_recall_logged(
         self, _setup: tuple, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
@@ -1111,7 +1111,7 @@ class TestQueryLog:
 
         mcp, kb, _logger = _setup
         log_path = tmp_path / "query_log.jsonl"
-        monkeypatch.setenv("ENGRAM_QUERY_LOG", str(log_path))
+        monkeypatch.setenv("INKWELL_QUERY_LOG", str(log_path))
 
         created = kb.remember(
             "Query log target", "A searchable body.", ["test"], "snippet"
@@ -1138,7 +1138,7 @@ class TestQueryLog:
         """Without the env var, no log file is created."""
 
         mcp, _kb, _logger = _setup
-        monkeypatch.delenv("ENGRAM_QUERY_LOG", raising=False)
+        monkeypatch.delenv("INKWELL_QUERY_LOG", raising=False)
 
         _call_tool(mcp, "search", {"query": "anything"})
 

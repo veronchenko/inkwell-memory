@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""SessionStart hook: remind to search Engram before starting work.
+"""SessionStart hook: remind to search Inkwell before starting work.
 
 Fires once per session, unconditionally — SessionStart isn't in Claude
 Code's prompt-hook-supported event list, so this is a plain command hook
@@ -18,16 +18,16 @@ except Exception:
         pass
 
 PROMPT = """
-New Claude Code session started. Search Engram (mcp__engram__search / mcp__engram__recall) before the first substantive action on every user request, and again when the topic shifts.
-If this project directory has no Engram hub entry yet (search/list/tags turn up nothing for it), fix that via the engram-project-onboarder subagent.
+New Claude Code session started. Search Inkwell (mcp__inkwell__search / mcp__inkwell__recall) before the first substantive action on every user request, and again when the topic shifts.
+If this project directory has no Inkwell hub entry yet (search/list/tags turn up nothing for it), fix that via the inkwell-project-onboarder subagent.
 """
 
 
 def main() -> None:
-    if os.environ.get("ENGRAM_SESSION_START_DISABLE") == "1":
-        log("SessionStart", "disabled via ENGRAM_SESSION_START_DISABLE, skipping")
+    if os.environ.get("INKWELL_SESSION_START_DISABLE") == "1":
+        log("SessionStart", "disabled via INKWELL_SESSION_START_DISABLE, skipping")
         return
-    log("SessionStart", "emitting Engram search reminder")
+    log("SessionStart", "emitting Inkwell search reminder")
     print(json.dumps({
         "hookSpecificOutput": {
             "hookEventName": "SessionStart",

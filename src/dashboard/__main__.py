@@ -1,5 +1,5 @@
 """
-Engram dashboard — web UI entry point.
+Inkwell dashboard — web UI entry point.
 
 Runs a FastAPI app (see dashboard/app.py) on its own host/port, reusing
 the same KnowledgeBase/SQLiteBackend pair server.py builds for MCP.
@@ -33,7 +33,7 @@ def main() -> None:
 
     args = parse_args()
 
-    logger = logging.getLogger("engram")
+    logger = logging.getLogger("inkwell")
     logger.setLevel(logging.INFO)
     if not logger.handlers:
         handler = logging.StreamHandler()
@@ -47,7 +47,7 @@ def main() -> None:
 
     logger.info("Initializing knowledge base from %s", args.data_path)
     schema = load_schema(args.data_path)
-    index_path = Path(args.data_path) / "index" / "engram.db"
+    index_path = Path(args.data_path) / "index" / "inkwell.db"
     backend = SQLiteBackend(index_path, embedding_model=args.embedding_model)
     backend.warm_up()
     kb = KnowledgeBase(args.data_path, backend=backend, schema=schema)
@@ -58,7 +58,7 @@ def main() -> None:
     if port != args.port:
         logger.info("Port %d in use, using free port %d instead", args.port, port)
 
-    logger.info("Starting Engram dashboard on %s:%d", args.host, port)
+    logger.info("Starting Inkwell dashboard on %s:%d", args.host, port)
     uvicorn.run(app, host=args.host, port=port, log_level="info")
 
 

@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.14.0
+
+**Breaking: the project is renamed from Engram to Inkwell.** "Engram" collides with 10+ unrelated memory-MCP servers on GitHub, so search and AI-recommendation traffic for the name scattered across all of them. Nothing about the storage format or the tool surface changed — entry files, frontmatter, `kb://` links and the eight MCP tool names (`remember`, `recall`, `search`, `list`, `tags`, `forget`, `rebuild`, `doctor`) are untouched. Everything around them moved, with no compatibility shims:
+
+- env vars `ENGRAM_*` → `INKWELL_*`
+- default knowledge base `~/.engram/knowledge` → `~/.inkwell/knowledge`
+- Docker image `foreigndmitryi/engram` → `foreigndmitryi/inkwell-memory` (Docker Hub cannot rename a repository; the old one stays published but is no longer updated)
+- MCP server id registered by `scripts/install.*` `engram` → `inkwell`, so agent-facing tool names become `mcp__inkwell__*`
+- plugin `engram-hooks` → `inkwell-hooks` (bumped to 2.0.0 — its hook matchers follow the tool-name change), `engram-pi` → `inkwell-pi`, subagent `engram-project-onboarder` → `inkwell-project-onboarder`, `ENGRAM_SPEC.md`/`ENGRAM_TEMPLATES.md` → `INKWELL_SPEC.md`/`INKWELL_TEMPLATES.md`
+- Python distribution `engram` → `inkwell-memory`, console script `engram` → `inkwell`
+- search index filename `<data-path>/index/engram.db` → `inkwell.db`. The index is a rebuildable cache, so an existing deployment simply re-indexes and re-embeds on first start; the old file can be deleted
+- repository moved to `github.com/veronchenko/inkwell-memory` (GitHub redirects the old URL); the docs site moved to `veronchenko.github.io/inkwell-memory`
+
+To upgrade an existing install: rename the env vars, move `~/.engram/knowledge` to `~/.inkwell/knowledge`, re-register the MCP server under the new id, and reinstall the plugin.
+
 ## 0.13.0
 
 - feat: usage-analytics `query_log` — every `search`/`recall`/`remember` call is now recorded (session id, tool, query text, returned/top result ids, hit, latency) in a new SQLite table, separate from the existing `ENGRAM_QUERY_LOG` JSONL trace. A new `GET /api/analytics` endpoint and dashboard panel surface read/write ratio, hit rate, zero-hit queries (verbatim), click-through rate, searches-per-recall, average recall rank, hit distribution by entry type, dead entries, and sessions touching Engram

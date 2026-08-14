@@ -1,8 +1,8 @@
-"""Shared debug-logging helper for the Engram hooks in this folder.
+"""Shared debug-logging helper for the Inkwell hooks in this folder.
 
 Writes timestamped lines to hooks/logs/debug.log, next to the hook scripts
 themselves, so hook behavior can be inspected without --debug transcripts.
-Disable by setting ENGRAM_HOOKS_DEBUG=0. Logging failures are swallowed —
+Disable by setting INKWELL_HOOKS_DEBUG=0. Logging failures are swallowed —
 a broken log write must never block or break a hook.
 
 Retention: the log is capped at MAX_LOG_BYTES. Once it hits the cap it is
@@ -15,11 +15,11 @@ import os
 
 LOG_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logs")
 LOG_FILE = os.path.join(LOG_DIR, "debug.log")
-MAX_LOG_BYTES = int(os.environ.get("ENGRAM_HOOKS_LOG_MAX_BYTES", 5 * 1024 * 1024))
+MAX_LOG_BYTES = int(os.environ.get("INKWELL_HOOKS_LOG_MAX_BYTES", 5 * 1024 * 1024))
 
 
 def log(hook_name: str, message: str) -> None:
-    if os.environ.get("ENGRAM_HOOKS_DEBUG") == "0":
+    if os.environ.get("INKWELL_HOOKS_DEBUG") == "0":
         return
     try:
         os.makedirs(LOG_DIR, exist_ok=True)

@@ -1,10 +1,10 @@
 """
-Engram admin API — team registry management for multi-tenant mode.
+Inkwell admin API — team registry management for multi-tenant mode.
 
-Loopback-only by design (see engram_memory decision on multi-tenant VPS
+Loopback-only by design (see inkwell_memory decision on multi-tenant VPS
 deployment): not proxied by nginx, reachable only via `docker exec` +
-the `engram` CLI, or a future admin UI running inside the same trust
-boundary. Every route requires the ENGRAM_ADMIN_API_KEY bearer token —
+the `inkwell` CLI, or a future admin UI running inside the same trust
+boundary. Every route requires the INKWELL_ADMIN_API_KEY bearer token —
 a distinct secret from any team's own API key.
 """
 
@@ -58,7 +58,7 @@ def create_app(store: TeamAdminStore, api_key: str) -> FastAPI:
         Configured FastAPI application.
     """
 
-    app = FastAPI(title="Engram Admin API")
+    app = FastAPI(title="Inkwell Admin API")
 
     def _require_admin(
         creds: HTTPAuthorizationCredentials = Depends(_bearer),  # noqa: B008

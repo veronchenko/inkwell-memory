@@ -1,11 +1,11 @@
 """
-Engram admin CLI — thin HTTP client for the admin API (see admin_api/app.py).
+Inkwell admin CLI — thin HTTP client for the admin API (see admin_api/app.py).
 
 Meant to be run via `docker exec` inside the same container as the merged
 multi-tenant server (MCP + dashboard + admin UI, see app.py), which mounts
-the admin JSON API at /admin/api on the main ENGRAM_PORT — loopback access
+the admin JSON API at /admin/api on the main INKWELL_PORT — loopback access
 to that port from inside the container is unaffected by whatever nginx
-does with it externally. Reads ENGRAM_ADMIN_API_URL/ENGRAM_ADMIN_API_KEY
+does with it externally. Reads INKWELL_ADMIN_API_URL/INKWELL_ADMIN_API_KEY
 from the same environment the container already has, with no separate
 configuration step. Uses stdlib urllib only: the CLI's entire job is a
 handful of small JSON requests, not worth a new dependency.
@@ -38,7 +38,7 @@ def _admin_key() -> str:
     key = env("ADMIN_API_KEY")
     if not key:
         print(
-            "error: ENGRAM_ADMIN_API_KEY is not set in this shell — "
+            "error: INKWELL_ADMIN_API_KEY is not set in this shell — "
             "the admin API needs it too, so it should already be in the "
             "container's environment.",
             file=sys.stderr,
@@ -97,7 +97,7 @@ def _cmd_backup(args: argparse.Namespace) -> None:
     dest_dir.mkdir(parents=True, exist_ok=True)
 
     timestamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
-    dest_file = dest_dir / f"engram-backup-{timestamp}.tar.gz"
+    dest_file = dest_dir / f"inkwell-backup-{timestamp}.tar.gz"
 
     with tarfile.open(dest_file, "w:gz") as tar:
         for name in ("teams", "entries", "index", "admin.db"):
@@ -109,9 +109,9 @@ def _cmd_backup(args: argparse.Namespace) -> None:
 
 
 def main(argv: list[str] | None = None) -> None:
-    """Entry point for the `engram` console script."""
+    """Entry point for the `inkwell` console script."""
 
-    parser = argparse.ArgumentParser(prog="engram", description="Engram admin CLI")
+    parser = argparse.ArgumentParser(prog="inkwell", description="Inkwell admin CLI")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     add_team = subparsers.add_parser("add-team", help="Register a new team and print its API key")
@@ -131,7 +131,7 @@ def main(argv: list[str] | None = None) -> None:
     backup.add_argument(
         "--data-path",
         default=env("DATA_PATH", "/knowledge"),
-        help="Root path for knowledge data (env: ENGRAM_DATA_PATH, default: /knowledge)",
+        help="Root path for knowledge data (env: INKWELL_DATA_PATH, default: /knowledge)",
     )
     backup.add_argument(
         "--dest", required=True, help="Destination directory for the tar.gz snapshot"

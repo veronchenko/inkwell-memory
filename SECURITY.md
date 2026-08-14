@@ -6,7 +6,7 @@ Only the latest tagged release (see `CHANGELOG.md`/`VERSION`) receives security 
 
 ## Reporting a Vulnerability
 
-Please **do not** open a public GitHub issue for security vulnerabilities. Instead, use [GitHub's private vulnerability reporting](https://github.com/veronchenko/engram-memory/security/advisories/new) for this repository.
+Please **do not** open a public GitHub issue for security vulnerabilities. Instead, use [GitHub's private vulnerability reporting](https://github.com/veronchenko/inkwell-memory/security/advisories/new) for this repository.
 
 Include:
 - A description of the vulnerability and its impact
@@ -17,5 +17,5 @@ You should receive an initial response within a few days. Once a fix is availabl
 
 ## Scope Notes
 
-- Engram's multi-tenant mode (`ENGRAM_MULTI_TENANT=1`) uses a static pre-shared API key per team, hashed at rest in `admin.db` — treat key distribution as sensitive.
+- Inkwell's multi-tenant mode (`INKWELL_MULTI_TENANT=1`) uses a static pre-shared API key per team, hashed at rest in `admin.db` — treat key distribution as sensitive.
 - The admin API (`src/admin_api/`) is loopback-only by design and must not be exposed outside the container/host network.

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Claude Code statusLine script for the engram-hooks workflow.
+"""Claude Code statusLine script for the inkwell-hooks workflow.
 
 Not wired via hooks.json: plugin settings.json only supports the `agent`
 and `subagentStatusLine` keys, not the main `statusLine` (see plugins
@@ -12,12 +12,12 @@ reference), so a plugin cannot auto-register this. Point your own
     }
 
 Reads the statusline JSON payload Claude Code sends on stdin (model,
-workspace, context_window, session_id) plus this session's Engram hook
-state (_session_state.py, written by engram_change_tracker.py,
-engram_stop_prompt.py, and engram_remember_gate.py) to show: model, git
+workspace, context_window, session_id) plus this session's Inkwell hook
+state (_session_state.py, written by inkwell_change_tracker.py,
+inkwell_stop_prompt.py, and inkwell_remember_gate.py) to show: model, git
 branch, context-window usage (percent + token count), change-counter and
 self-report progress toward their thresholds, and remembers written this
-session. engram_cost_tracker.py also writes tokens_in/tokens_out/cost_usd
+session. inkwell_cost_tracker.py also writes tokens_in/tokens_out/cost_usd
 into the same state file, but this script deliberately doesn't surface
 them — cost tracking stays local-only data, not a statusline metric.
 """
@@ -37,8 +37,8 @@ import _session_state as state
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
 
-CHANGE_THRESHOLD = int(os.environ.get("ENGRAM_CHANGE_THRESHOLD", "15"))
-STOP_INTERVAL = int(os.environ.get("ENGRAM_STOP_INTERVAL", "5"))
+CHANGE_THRESHOLD = int(os.environ.get("INKWELL_CHANGE_THRESHOLD", "15"))
+STOP_INTERVAL = int(os.environ.get("INKWELL_STOP_INTERVAL", "5"))
 
 
 def _git_branch(cwd: str) -> str | None:

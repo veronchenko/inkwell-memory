@@ -35,7 +35,7 @@ from doctor import run_doctor
 from schema import Schema, load_schema
 from search_backend import SQLiteBackend, extract_relations
 
-logger = logging.getLogger("engram")
+logger = logging.getLogger("inkwell")
 
 # Regex for parsing YAML frontmatter (anchored to start of file, line-start ---)
 _FRONTMATTER_RE: re.Pattern[str] = re.compile(r"\A---\n(.*?)\n---\n(.*)", re.DOTALL)
@@ -86,7 +86,7 @@ class KnowledgeBase:
         Args:
             data_path: Root directory for knowledge storage.
             backend: Search backend instance. When None, creates a
-                SQLiteBackend at data_path/index/engram.db.
+                SQLiteBackend at data_path/index/inkwell.db.
             schema: Entry validation contract. When None, loaded from
                 data_path/schema.json, falling back to the packaged one.
 
@@ -96,7 +96,7 @@ class KnowledgeBase:
 
         self._data_path = Path(data_path)
         self._entries_path = self._data_path / "entries"
-        self._index_path = self._data_path / "index" / "engram.db"
+        self._index_path = self._data_path / "index" / "inkwell.db"
         self._schema = schema if schema is not None else load_schema(data_path)
 
         self._entries_path.mkdir(parents=True, exist_ok=True)

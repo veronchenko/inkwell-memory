@@ -25,8 +25,8 @@ def env(name: str, default: str) -> str: ...
 @overload
 def env(name: str, default: None = None) -> str | None: ...
 def env(name: str, default: str | None = None) -> str | None:
-    """Read an ENGRAM_* environment variable with a default."""
-    return os.environ.get(f"ENGRAM_{name}", default)
+    """Read an INKWELL_* environment variable with a default."""
+    return os.environ.get(f"INKWELL_{name}", default)
 
 
 # ---------------------------------------------------------------------------
@@ -35,7 +35,7 @@ def env(name: str, default: str | None = None) -> str | None:
 
 # Default embedding model — multilingual static embeddings (256-dim),
 # picked because KB content mixes Russian and English. Overridable via
-# ENGRAM_EMBEDDING_MODEL for callers that construct SQLiteBackend directly.
+# INKWELL_EMBEDDING_MODEL for callers that construct SQLiteBackend directly.
 DEFAULT_EMBEDDING_MODEL: str = "minishlab/potion-multilingual-128M"
 
 # ---------------------------------------------------------------------------
@@ -75,7 +75,7 @@ MIN_EXACT_DISCRIMINATING_TOKENS: int = 2
 # Higher bar than MIN_COSINE_SIMILARITY: search recall tolerates loose
 # matches, but a suggested kb:// link should only surface entries that are
 # actually worth cross-referencing. Tuned against the real production KB
-# (see Engram diagnostic on entity-resolution prototyping) — 0.45 cleanly
+# (see Inkwell diagnostic on entity-resolution prototyping) — 0.45 cleanly
 # separated genuinely related entries from the rest in both a topically
 # narrow cluster and a distinct-topic cluster.
 SUGGESTION_MIN_SIMILARITY: float = 0.45
@@ -158,7 +158,7 @@ DASHBOARD_DEFAULT_PORT: int = 8193
 
 @dataclass(frozen=True)
 class ServerSettings:
-    """Resolved MCP server settings (CLI args win over ENGRAM_* env vars)."""
+    """Resolved MCP server settings (CLI args win over INKWELL_* env vars)."""
 
     data_path: str
     transport: str
@@ -172,7 +172,7 @@ class ServerSettings:
 
 def parse_server_args(argv: list[str] | None = None) -> ServerSettings:
     """
-    Parse MCP server CLI arguments, falling back to ENGRAM_* env vars.
+    Parse MCP server CLI arguments, falling back to INKWELL_* env vars.
 
     Args:
         argv: Argument list to parse; defaults to sys.argv[1:].
@@ -181,22 +181,22 @@ def parse_server_args(argv: list[str] | None = None) -> ServerSettings:
         Resolved ServerSettings.
     """
 
-    parser = argparse.ArgumentParser(description="Engram MCP Server")
+    parser = argparse.ArgumentParser(description="Inkwell MCP Server")
     parser.add_argument(
         "--data-path",
         default=env("DATA_PATH", "/knowledge"),
-        help="Root path for knowledge data (env: ENGRAM_DATA_PATH, default: /knowledge)",
+        help="Root path for knowledge data (env: INKWELL_DATA_PATH, default: /knowledge)",
     )
     parser.add_argument(
         "--transport",
         choices=["stdio", "sse", "streamable-http"],
         default=env("TRANSPORT", "stdio"),
-        help="MCP transport (env: ENGRAM_TRANSPORT, default: stdio)",
+        help="MCP transport (env: INKWELL_TRANSPORT, default: stdio)",
     )
     parser.add_argument(
         "--host",
         default=env("HOST", "0.0.0.0"),
-        help="Listen address (env: ENGRAM_HOST, default: 0.0.0.0)",
+        help="Listen address (env: INKWELL_HOST, default: 0.0.0.0)",
     )
     parser.add_argument(
         "--port",
@@ -204,7 +204,7 @@ def parse_server_args(argv: list[str] | None = None) -> ServerSettings:
         default=int(env("PORT", "8192")),
         help=(
             "Starting port for sse/streamable-http transport; the first free "
-            "port at or above this is used (env: ENGRAM_PORT, default: 8192). "
+            "port at or above this is used (env: INKWELL_PORT, default: 8192). "
             "Unused for stdio transport."
         ),
     )
@@ -213,7 +213,7 @@ def parse_server_args(argv: list[str] | None = None) -> ServerSettings:
         default=env("EMBEDDING_MODEL", DEFAULT_EMBEDDING_MODEL),
         help=(
             "Model2Vec HuggingFace hub id for semantic search "
-            f"(env: ENGRAM_EMBEDDING_MODEL, default: {DEFAULT_EMBEDDING_MODEL})"
+            f"(env: INKWELL_EMBEDDING_MODEL, default: {DEFAULT_EMBEDDING_MODEL})"
         ),
     )
     parser.add_argument(
@@ -223,8 +223,8 @@ def parse_server_args(argv: list[str] | None = None) -> ServerSettings:
         help=(
             "Serve several teams from one process: --data-path becomes a "
             "root of admin.db + teams/<name>/, and every request must carry "
-            "a bearer token issued by `engram add-team` (env: "
-            "ENGRAM_MULTI_TENANT=1, default: off). Independent of "
+            "a bearer token issued by `inkwell add-team` (env: "
+            "INKWELL_MULTI_TENANT=1, default: off). Independent of "
             "--transport — stdio ignores this flag."
         ),
     )
@@ -232,9 +232,9 @@ def parse_server_args(argv: list[str] | None = None) -> ServerSettings:
         "--public-url",
         default=env("PUBLIC_URL", ""),
         help=(
-            "Externally reachable base URL (e.g. https://engram.example.com), "
+            "Externally reachable base URL (e.g. https://inkwell.example.com), "
             "required with --multi-tenant — used as the OAuth resource-server "
-            "identifier for token validation (env: ENGRAM_PUBLIC_URL)"
+            "identifier for token validation (env: INKWELL_PUBLIC_URL)"
         ),
     )
     parser.add_argument(
@@ -242,7 +242,7 @@ def parse_server_args(argv: list[str] | None = None) -> ServerSettings:
         default=env("ADMIN_API_KEY", ""),
         help=(
             "Required with --multi-tenant: bearer token for the admin JSON "
-            "API and the admin/team browser login (env: ENGRAM_ADMIN_API_KEY)"
+            "API and the admin/team browser login (env: INKWELL_ADMIN_API_KEY)"
         ),
     )
 
@@ -266,7 +266,7 @@ def parse_server_args(argv: list[str] | None = None) -> ServerSettings:
 
 @dataclass(frozen=True)
 class DashboardSettings:
-    """Resolved dashboard settings (CLI args win over ENGRAM_* env vars)."""
+    """Resolved dashboard settings (CLI args win over INKWELL_* env vars)."""
 
     data_path: str
     host: str
@@ -276,7 +276,7 @@ class DashboardSettings:
 
 def parse_dashboard_args(argv: list[str] | None = None) -> DashboardSettings:
     """
-    Parse dashboard CLI arguments, falling back to ENGRAM_* env vars.
+    Parse dashboard CLI arguments, falling back to INKWELL_* env vars.
 
     Args:
         argv: Argument list to parse; defaults to sys.argv[1:].
@@ -285,16 +285,16 @@ def parse_dashboard_args(argv: list[str] | None = None) -> DashboardSettings:
         Resolved DashboardSettings.
     """
 
-    parser = argparse.ArgumentParser(description="Engram Dashboard")
+    parser = argparse.ArgumentParser(description="Inkwell Dashboard")
     parser.add_argument(
         "--data-path",
         default=env("DATA_PATH", "/knowledge"),
-        help="Root path for knowledge data (env: ENGRAM_DATA_PATH, default: /knowledge)",
+        help="Root path for knowledge data (env: INKWELL_DATA_PATH, default: /knowledge)",
     )
     parser.add_argument(
         "--host",
         default=env("DASHBOARD_HOST", "0.0.0.0"),
-        help="Listen address (env: ENGRAM_DASHBOARD_HOST, default: 0.0.0.0)",
+        help="Listen address (env: INKWELL_DASHBOARD_HOST, default: 0.0.0.0)",
     )
     parser.add_argument(
         "--port",
@@ -302,7 +302,7 @@ def parse_dashboard_args(argv: list[str] | None = None) -> DashboardSettings:
         default=int(env("DASHBOARD_PORT", str(DASHBOARD_DEFAULT_PORT))),
         help=(
             "Starting port; the first free port at or above this is used "
-            f"(env: ENGRAM_DASHBOARD_PORT, default: {DASHBOARD_DEFAULT_PORT})"
+            f"(env: INKWELL_DASHBOARD_PORT, default: {DASHBOARD_DEFAULT_PORT})"
         ),
     )
     parser.add_argument(
@@ -310,7 +310,7 @@ def parse_dashboard_args(argv: list[str] | None = None) -> DashboardSettings:
         default=env("EMBEDDING_MODEL", DEFAULT_EMBEDDING_MODEL),
         help=(
             "Model2Vec HuggingFace hub id for semantic search "
-            f"(env: ENGRAM_EMBEDDING_MODEL, default: {DEFAULT_EMBEDDING_MODEL})"
+            f"(env: INKWELL_EMBEDDING_MODEL, default: {DEFAULT_EMBEDDING_MODEL})"
         ),
     )
 
@@ -327,16 +327,16 @@ def parse_dashboard_args(argv: list[str] | None = None) -> DashboardSettings:
 # admin_api.py CLI/env settings
 # ---------------------------------------------------------------------------
 
-# Admin API is loopback-only by design (see engram_memory decision on
+# Admin API is loopback-only by design (see inkwell_memory decision on
 # multi-tenant VPS deployment) — not proxied by nginx, only reachable via
-# `docker exec` + the `engram` CLI.
+# `docker exec` + the `inkwell` CLI.
 ADMIN_API_DEFAULT_HOST: str = "127.0.0.1"
 ADMIN_API_DEFAULT_PORT: int = 8194
 
 
 @dataclass(frozen=True)
 class AdminApiSettings:
-    """Resolved admin API settings (CLI args win over ENGRAM_* env vars)."""
+    """Resolved admin API settings (CLI args win over INKWELL_* env vars)."""
 
     data_path: str
     host: str
@@ -346,7 +346,7 @@ class AdminApiSettings:
 
 def parse_admin_api_args(argv: list[str] | None = None) -> AdminApiSettings:
     """
-    Parse admin API CLI arguments, falling back to ENGRAM_* env vars.
+    Parse admin API CLI arguments, falling back to INKWELL_* env vars.
 
     Args:
         argv: Argument list to parse; defaults to sys.argv[1:].
@@ -356,21 +356,21 @@ def parse_admin_api_args(argv: list[str] | None = None) -> AdminApiSettings:
 
     Raises:
         SystemExit: no API key was supplied via --api-key or
-            ENGRAM_ADMIN_API_KEY — the admin surface refuses to start
+            INKWELL_ADMIN_API_KEY — the admin surface refuses to start
             unauthenticated.
     """
 
-    parser = argparse.ArgumentParser(description="Engram Admin API")
+    parser = argparse.ArgumentParser(description="Inkwell Admin API")
     parser.add_argument(
         "--data-path",
         default=env("DATA_PATH", "/knowledge"),
-        help="Root path for team data (env: ENGRAM_DATA_PATH, default: /knowledge)",
+        help="Root path for team data (env: INKWELL_DATA_PATH, default: /knowledge)",
     )
     parser.add_argument(
         "--host",
         default=env("ADMIN_API_HOST", ADMIN_API_DEFAULT_HOST),
         help=(
-            "Listen address (env: ENGRAM_ADMIN_API_HOST, default: "
+            "Listen address (env: INKWELL_ADMIN_API_HOST, default: "
             f"{ADMIN_API_DEFAULT_HOST}). Keep this on loopback — the admin "
             "API is not meant to be reachable outside the container."
         ),
@@ -379,18 +379,18 @@ def parse_admin_api_args(argv: list[str] | None = None) -> AdminApiSettings:
         "--port",
         type=int,
         default=int(env("ADMIN_API_PORT", str(ADMIN_API_DEFAULT_PORT))),
-        help=(f"Listen port (env: ENGRAM_ADMIN_API_PORT, default: {ADMIN_API_DEFAULT_PORT})"),
+        help=(f"Listen port (env: INKWELL_ADMIN_API_PORT, default: {ADMIN_API_DEFAULT_PORT})"),
     )
     parser.add_argument(
         "--api-key",
         default=env("ADMIN_API_KEY"),
-        help="Required bearer token for admin routes (env: ENGRAM_ADMIN_API_KEY)",
+        help="Required bearer token for admin routes (env: INKWELL_ADMIN_API_KEY)",
     )
 
     args = parser.parse_args(argv)
     if not args.api_key:
         parser.error(
-            "--api-key or ENGRAM_ADMIN_API_KEY is required — the admin API "
+            "--api-key or INKWELL_ADMIN_API_KEY is required — the admin API "
             "refuses to start unauthenticated"
         )
 

@@ -24,7 +24,7 @@ from typing import Any, Final, cast
 from schema import Schema, TypeRule
 from search_backend import extract_relations
 
-logger = logging.getLogger("engram")
+logger = logging.getLogger("inkwell")
 
 # Ids reported per defect kind — the response stays bounded on a KB of
 # any size; `count` always carries the true total.

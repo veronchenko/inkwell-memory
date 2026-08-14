@@ -6,11 +6,11 @@ product
 
 ## Users
 
-Anyone self-hosting Engram (the persistent-memory MCP server) — currently the maintainer, potentially other operators who run their own instance via Docker. They open the dashboard when the MCP tools (`remember`/`recall`/`search`) aren't enough: to visually explore how entries connect, spot orphaned or duplicate knowledge, and hand-edit or delete entries directly. It's a debugging/maintenance surface for a personal knowledge base, not a consumer product — used in short, focused sessions, not continuously.
+Anyone self-hosting Inkwell (the persistent-memory MCP server) — currently the maintainer, potentially other operators who run their own instance via Docker. They open the dashboard when the MCP tools (`remember`/`recall`/`search`) aren't enough: to visually explore how entries connect, spot orphaned or duplicate knowledge, and hand-edit or delete entries directly. It's a debugging/maintenance surface for a personal knowledge base, not a consumer product — used in short, focused sessions, not continuously.
 
 ## Product Purpose
 
-Give the person running Engram a direct window into their knowledge graph: a force-directed canvas view of all entries and their `kb://` relations, full-text/semantic search over the same index the MCP tools use, and a CRUD panel to create, edit, supersede, or delete entries without touching Markdown files by hand. Success is being able to answer "what do I already know about X, and how does it connect to Y" in seconds, and to fix a bad entry without a text editor.
+Give the person running Inkwell a direct window into their knowledge graph: a force-directed canvas view of all entries and their `kb://` relations, full-text/semantic search over the same index the MCP tools use, and a CRUD panel to create, edit, supersede, or delete entries without touching Markdown files by hand. Success is being able to answer "what do I already know about X, and how does it connect to Y" in seconds, and to fix a bad entry without a text editor.
 
 ## Brand Personality
 

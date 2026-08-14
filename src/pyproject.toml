@@ -3,9 +3,9 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "engram"
-version = "0.13.0"
-description = "Engram — persistent knowledge base MCP server"
+name = "inkwell-memory"
+version = "0.14.0"
+description = "Inkwell — persistent knowledge base MCP server"
 requires-python = ">=3.12"
 dependencies = [
     "fastmcp==3.4.5",
@@ -38,7 +38,7 @@ classifiers = [
 ]
 
 [project.scripts]
-engram = "cli:main"
+inkwell = "cli:main"
 
 [tool.uv]
 default-groups = ["dev", "test"]

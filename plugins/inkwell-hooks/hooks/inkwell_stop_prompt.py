@@ -1,24 +1,24 @@
 #!/usr/bin/env python3
-"""Stop hook: hybrid reminder to write non-trivial changes to Engram.
+"""Stop hook: hybrid reminder to write non-trivial changes to Inkwell.
 
 Two independent triggers, checked in order:
 
-1. Change-counter (mechanical) — fires once ENGRAM_CHANGE_THRESHOLD
+1. Change-counter (mechanical) — fires once INKWELL_CHANGE_THRESHOLD
    file-editing tool calls (Edit/Write/NotebookEdit/git commit) have
-   happened since the last mcp__engram__remember call. Counted by
-   engram_change_tracker.py's PostToolUse hook. The block reason states the
+   happened since the last mcp__inkwell__remember call. Counted by
+   inkwell_change_tracker.py's PostToolUse hook. The block reason states the
    fact plainly (no self-judgment needed to know the count is accurate), but
    still lets the model decide remember isn't warranted — not every batch of
    edits produces something worth persisting.
-2. Self-report (judgment-based) — fires every ENGRAM_STOP_INTERVAL-th Stop
+2. Self-report (judgment-based) — fires every INKWELL_STOP_INTERVAL-th Stop
    event, asking the model to review the transcript for anything the
    change-counter can't see (a decision made purely in conversation, with no
    tool call at all — mechanically undetectable by any hook).
 
 Whichever trigger fires resets BOTH counters (see _reset_counters), so the
 two mechanisms never double-block back-to-back for the same underlying work.
-mcp__engram__remember calls also reset both counters, via
-engram_remember_gate.py. stop_hook_active (set by Claude Code on the input
+mcp__inkwell__remember calls also reset both counters, via
+inkwell_remember_gate.py. stop_hook_active (set by Claude Code on the input
 JSON) avoids re-blocking in an infinite loop.
 
 Per-session counts are persisted via _session_state.py to a single JSON
@@ -38,13 +38,13 @@ except Exception:
         pass
 import _session_state as state
 
-STOP_INTERVAL = int(os.environ.get("ENGRAM_STOP_INTERVAL", "5"))
-CHANGE_THRESHOLD = int(os.environ.get("ENGRAM_CHANGE_THRESHOLD", "15"))
+STOP_INTERVAL = int(os.environ.get("INKWELL_STOP_INTERVAL", "5"))
+CHANGE_THRESHOLD = int(os.environ.get("INKWELL_CHANGE_THRESHOLD", "15"))
 
 SELF_REPORT_PROMPT = """
-Review the recent turns in this session's transcript (since the last time this reminder fired, or since the session started if it hasn't fired yet) against the "When to write to Engram" rule in your persistent-memory specification.
-If it applies and mcp__engram__remember was NOT called for it, call mcp__engram__remember before finishing. If you already judged there is nothing worth remembering, ignore this and proceed.
-If mcp__engram__remember already covered it, or this was pure read/Q&A with no new fact, or the assistant's immediately preceding message already addressed this exact reminder, say nothing about this reminder and continue.
+Review the recent turns in this session's transcript (since the last time this reminder fired, or since the session started if it hasn't fired yet) against the "When to write to Inkwell" rule in your persistent-memory specification.
+If it applies and mcp__inkwell__remember was NOT called for it, call mcp__inkwell__remember before finishing. If you already judged there is nothing worth remembering, ignore this and proceed.
+If mcp__inkwell__remember already covered it, or this was pure read/Q&A with no new fact, or the assistant's immediately preceding message already addressed this exact reminder, say nothing about this reminder and continue.
 """
 
 
@@ -75,8 +75,8 @@ def main() -> None:
             "decision": "block",
             "reason": (
                 f"{change_count} file-editing tool calls (Edit/Write/NotebookEdit/git commit) "
-                "happened since the last mcp__engram__remember call. If any of that is worth "
-                "keeping in Engram, call mcp__engram__remember for it now. If you already judged "
+                "happened since the last mcp__inkwell__remember call. If any of that is worth "
+                "keeping in Inkwell, call mcp__inkwell__remember for it now. If you already judged "
                 "there's nothing worth remembering, ignore this and proceed."
             ),
         }))

@@ -1,20 +1,20 @@
-<!-- Source of truth: plugins/engram-hooks/ in the engram_memory repo. The ~/.claude copy is installed from here — edit the plugin copy, then re-install. -->
+<!-- Source of truth: plugins/inkwell-hooks/ in the inkwell_memory repo. The ~/.claude copy is installed from here — edit the plugin copy, then re-install. -->
 
-# Engram — Persistent Memory
+# Inkwell — Persistent Memory
 
-Engram is an MCP server backed by a local knowledge base at `~/.claude/engram/knowledge`. It survives across projects and sessions.
+Inkwell is an MCP server backed by a local knowledge base at `~/.claude/inkwell/knowledge`. It survives across projects and sessions.
 
-Engram stores no discoverable information (one exception: hubs — see "Project hygiene" below). If it can be derived from code, git history, config files, or existing documentation, it does not belong in Engram.
+Inkwell stores no discoverable information (one exception: hubs — see "Project hygiene" below). If it can be derived from code, git history, config files, or existing documentation, it does not belong in Inkwell.
 
 ## Memory language
 
 The KB is English-only: translate both entry content (before `remember`) and queries (before `search`).
 
-## When to search Engram
+## When to search Inkwell
 
 - Before the first substantive action on every user request, and again when the request shifts to a new topic/context.
 
-## When to write to Engram
+## When to write to Inkwell
 
 Write when a turn produces something that won't survive past this conversation otherwise: built or changed something concrete, made a choice among alternatives, surfaced a non-obvious fact about a project, resolved a diagnostic, ran a non-trivial procedure, captured a stated preference, or produced a reusable snippet/pattern. Skip it for pure read/Q&A turns, or anything already captured by an earlier `remember` this session.
 
@@ -22,9 +22,9 @@ Write when a turn produces something that won't survive past this conversation o
 
 `remember` returns `suggested_links` (never auto-added) — link only genuinely relevant ones: add a `kb://<id>#<type>` reference into the entry's content with a follow-up `remember` call (same `entry_id`).
 
-## Project hygiene — every project is a hub entry in Engram
+## Project hygiene — every project is a hub entry in Inkwell
 
-Whenever working in a project directory that lacks an Engram entry, delegate its creation to the `engram-project-onboarder` subagent (via the Agent tool).
+Whenever working in a project directory that lacks an Inkwell entry, delegate its creation to the `inkwell-project-onboarder` subagent (via the Agent tool).
 
 The hub entry must follow the `hub` template below. This is the *only* exception to the "zero discoverable information" rule: because future sessions in *other* projects won't have access to this project's README/CLAUDE.md, the hub must always fully state what the project does.
 
@@ -48,11 +48,11 @@ Atomicity: one decision per article — no Markdown headers, ≤3 paragraphs, ta
 
 **When to use `supersede: true` on `remember`:** only when the fact itself genuinely changed — the thing it describes is now different (e.g. "the project moved from Xapian to SQLite FTS5", "the decision was reversed"). A plain `remember` (no `supersede`) still applies for corrections to wording, tags, or a typo in an otherwise-unchanged fact — those don't need a new version.
 
-@ENGRAM_TEMPLATES.md
+@INKWELL_TEMPLATES.md
 
 ## Memory work requires no confirmation
 
-Searching, recalling, or writing to Engram are local, reversible actions (entries can be corrected via `forget`/`remember` again) — never pause to ask the user for permission before calling an Engram tool.
+Searching, recalling, or writing to Inkwell are local, reversible actions (entries can be corrected via `forget`/`remember` again) — never pause to ask the user for permission before calling an Inkwell tool.
 
 ## Search requirement before remember
 

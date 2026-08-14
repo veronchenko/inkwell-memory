@@ -1,12 +1,14 @@
-# Engram — Persistent Knowledge Base MCP Server
+# Inkwell — Persistent Knowledge Base MCP Server
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Docker Pulls](https://img.shields.io/docker/pulls/foreigndmitryi/engram)](https://hub.docker.com/r/foreigndmitryi/engram)
+[![Docker Pulls](https://img.shields.io/docker/pulls/foreigndmitryi/inkwell-memory)](https://hub.docker.com/r/foreigndmitryi/inkwell-memory)
 [![Python 3.12+](https://img.shields.io/badge/python-3.12%2B-blue)](src/pyproject.toml)
 
-Engram is a self-hosted [Model Context Protocol](https://modelcontextprotocol.io/) server that gives AI agents persistent memory across sessions and projects. Markdown files as source of truth, hybrid keyword + semantic search, typed graph relations.
+Inkwell is a self-hosted [Model Context Protocol](https://modelcontextprotocol.io/) server that gives AI agents persistent memory across sessions and projects. Three things set it apart from the other memory servers: **plain Markdown files are the source of truth** (the index is a throwaway cache you can delete and rebuild), entries are connected by a **typed `kb://` graph** rather than dumped into a flat pile, and updates are **bi-temporal** — superseding a fact keeps the old version readable instead of overwriting it.
 
-**Docker Hub:** [foreigndmitryi/engram](https://hub.docker.com/r/foreigndmitryi/engram) · **Website:** [veronchenko.github.io/engram-memory](https://veronchenko.github.io/engram-memory/)
+**Docker Hub:** [foreigndmitryi/inkwell-memory](https://hub.docker.com/r/foreigndmitryi/inkwell-memory) · **Website:** [veronchenko.github.io/inkwell-memory](https://veronchenko.github.io/inkwell-memory/)
+
+> **Formerly Engram.** Renamed in 0.14.0 — there are a dozen unrelated projects called "Engram" and the name had stopped being findable. Not affiliated with any of them, nor with the Engram keyboard layout. See the [changelog](CHANGELOG.md) for what the rename breaks.
 
 ## Table of Contents
 
@@ -30,9 +32,9 @@ Engram is a self-hosted [Model Context Protocol](https://modelcontextprotocol.io
 
 ## Concept
 
-Agent conversations end and take their context with them. Engram is the piece that survives: a knowledge base an agent searches *before* acting and writes to *after* resolving something non-obvious, so the next session — same project or a different one — starts with what was already learned instead of re-deriving it.
+Agent conversations end and take their context with them. Inkwell is the piece that survives: a knowledge base an agent searches *before* acting and writes to *after* resolving something non-obvious, so the next session — same project or a different one — starts with what was already learned instead of re-deriving it.
 
-It deliberately stores **zero discoverable information**. If a fact can be pulled from code, git history, config files, or existing docs, it does not belong in Engram — that's what greps and re-reads are for. What belongs is the kind of knowledge a conversation would otherwise lose: a decision and the alternatives it ruled out, a bug's root cause and fix, a procedure learned the hard way, a preference stated once that should hold from then on.
+It deliberately stores **zero discoverable information**. If a fact can be pulled from code, git history, config files, or existing docs, it does not belong in Inkwell — that's what greps and re-reads are for. What belongs is the kind of knowledge a conversation would otherwise lose: a decision and the alternatives it ruled out, a bug's root cause and fix, a procedure learned the hard way, a preference stated once that should hold from then on.
 
 Two things keep the base usable as it grows:
 - **Atomicity** — one entry, one fact. `remember` warns (non-blocking) on Markdown headers, more than 3 paragraphs, or content past 512 B/1 KB, pushing multi-fact dumps back into separate linked entries instead of a wall of text no search will rank well.
@@ -54,7 +56,7 @@ Two things keep the base usable as it grows:
 
 ## Comparison
 
-| | Engram | Mem0 | Zep / Graphiti | LangMem |
+| | Inkwell | Mem0 | Zep / Graphiti | LangMem |
 |---|---|---|---|---|
 | Source of truth | Markdown files on disk | Vector DB / managed API | Temporal knowledge graph | Vector store (LangChain-backed) |
 | Search | BM25 + local Model2Vec embeddings (RRF fusion) | Vector similarity | Graph traversal + embeddings | Vector similarity |
@@ -63,13 +65,13 @@ Two things keep the base usable as it grows:
 | Deployment | Self-hosted, single Docker image, no cloud dependency | Hosted API or self-hosted + vector DB | Self-hosted, needs Neo4j | Library, no server |
 | Design center | Deliberately minimal — zero discoverable info, agent decides what's worth keeping | Automatic fact extraction from conversations | Automatic entity/relationship extraction | Composable memory primitives for LangGraph agents |
 
-Engram trades automatic extraction (Mem0, Zep) for an agent-curated, atomic, explicitly-linked knowledge base — no LLM-driven ingestion pipeline, no graph database dependency, and the on-disk Markdown stays human-readable and diffable.
+Inkwell trades automatic extraction (Mem0, Zep) for an agent-curated, atomic, explicitly-linked knowledge base — no LLM-driven ingestion pipeline, no graph database dependency, and the on-disk Markdown stays human-readable and diffable.
 
 ## Measured Against a Plain Markdown Wiki
 
-Engram was benchmarked against the same knowledge base packaged as an ordinary Markdown wiki — one file per topic, organized in folders by project and category (decision, diagnostic, feature, procedure, ...), each project with an index page and cross-links between related pages, browsed with `Read`/`Grep`/`Glob`/`Bash`. Same content, two ways of finding it — for equivalent fact coverage, Engram's `search`/`recall` used:
+Inkwell was benchmarked against the same knowledge base packaged as an ordinary Markdown wiki — one file per topic, organized in folders by project and category (decision, diagnostic, feature, procedure, ...), each project with an index page and cross-links between related pages, browsed with `Read`/`Grep`/`Glob`/`Bash`. Same content, two ways of finding it — for equivalent fact coverage, Inkwell's `search`/`recall` used:
 
-| | Engram | Wiki | Improvement |
+| | Inkwell | Wiki | Improvement |
 |---|---|---|---|
 | Tool calls | 104 | 186 | **-44%** |
 | Total tokens | 3.87M | 5.91M | **-35%** |
@@ -138,7 +140,7 @@ Markdown files in `<data-path>/entries/` are the only source of truth. The SQLit
 - **`src/doctor.py`** — the schema-driven integrity pass shared by the `doctor` tool, `rebuild`'s warnings, and `remember`'s conformance check
 - **`src/search_backend.py`** — `SQLiteBackend`: BM25 (FTS5) fused with Model2Vec cosine similarity via Reciprocal Rank Fusion, plus `kb://` relation extraction/graph traversal; embeddings are computed lazily on write and stored as a BLOB column
 - **`src/dashboard/`** — a second, optional process (`app.py` FastAPI REST + `/api/graph`, `static/index.html` vanilla-JS canvas graph, `__main__.py` its own uvicorn entry point) reusing the same `KnowledgeBase`
-- **`plugins/engram-hooks/`** — a self-contained plugin installable in both Claude Code and Codex (`.claude-plugin/plugin.json`, `SessionStart`/`Stop`/`SessionEnd` + a `PreToolUse` search-before-remember gate, plus a Claude-Code-only `engram-project-onboarder` agent) that mechanically enforces the search-first, remember-after workflow instead of relying on a system prompt alone; listed as `engram-hooks` in both the repo-root `.claude-plugin/marketplace.json` (Claude Code) and `plugins/marketplace.json` (Codex)
+- **`plugins/inkwell-hooks/`** — a self-contained plugin installable in both Claude Code and Codex (`.claude-plugin/plugin.json`, `SessionStart`/`Stop`/`SessionEnd` + a `PreToolUse` search-before-remember gate, plus a Claude-Code-only `inkwell-project-onboarder` agent) that mechanically enforces the search-first, remember-after workflow instead of relying on a system prompt alone; listed as `inkwell-hooks` in both the repo-root `.claude-plugin/marketplace.json` (Claude Code) and `plugins/marketplace.json` (Codex)
 
 In Docker, the MCP server and the dashboard run as two processes in one container (`docker-entrypoint.sh`), sharing the same `/knowledge` volume; the container exits if either process dies.
 
@@ -149,8 +151,8 @@ In Docker, the MCP server and the dashboard run as two processes in one containe
 Your agent manages the server. Recommended for Claude Code, ChatGPT Desktop, Cursor.
 
 ```bash
-claude mcp add --transport stdio engram -- \
-  docker run -i --rm -v ./knowledge:/knowledge foreigndmitryi/engram
+claude mcp add --transport stdio inkwell -- \
+  docker run -i --rm -v ./knowledge:/knowledge foreigndmitryi/inkwell-memory
 ```
 
 ### SSE
@@ -158,13 +160,13 @@ claude mcp add --transport stdio engram -- \
 Persistent server on the network. Share knowledge across multiple agents.
 
 ```bash
-docker run -d --name engram \
+docker run -d --name inkwell \
   -p 8192 \
   -v ./knowledge:/knowledge \
-  foreigndmitryi/engram --transport sse
+  foreigndmitryi/inkwell-memory --transport sse
 
-docker port engram 8192   # host port Docker assigned
-claude mcp add --transport sse engram http://your-host:<port>/sse
+docker port inkwell 8192   # host port Docker assigned
+claude mcp add --transport sse inkwell http://your-host:<port>/sse
 ```
 
 `-p 8192` (host port omitted) has Docker pick a free ephemeral host port
@@ -177,21 +179,21 @@ Use `-p 8192:8192` instead if you need the host port to stay fixed.
 Stateless, load-balanceable.
 
 ```bash
-docker run -d --name engram \
+docker run -d --name inkwell \
   -p 8192 \
   -v ./knowledge:/knowledge \
-  foreigndmitryi/engram --transport streamable-http
+  foreigndmitryi/inkwell-memory --transport streamable-http
 
-docker port engram 8192   # host port Docker assigned
-claude mcp add --transport http engram http://your-host:<port>/mcp
+docker port inkwell 8192   # host port Docker assigned
+claude mcp add --transport http inkwell http://your-host:<port>/mcp
 ```
 
 ### Multi-tenant
 
-One server, several teams, each isolated to its own data folder and API key. Set `ENGRAM_MULTI_TENANT=1` (requires `ENGRAM_PUBLIC_URL` and `ENGRAM_ADMIN_API_KEY`, and a network transport — never stdio); `src/app.py` then serves MCP, the admin UI, and the dashboard from one process. Provision a team with `engram add-team <name>` (run via `docker exec`, see [`src/cli.py`](src/cli.py)) to get back its API key, then point each team's agent at `/mcp` with that key as a bearer token:
+One server, several teams, each isolated to its own data folder and API key. Set `INKWELL_MULTI_TENANT=1` (requires `INKWELL_PUBLIC_URL` and `INKWELL_ADMIN_API_KEY`, and a network transport — never stdio); `src/app.py` then serves MCP, the admin UI, and the dashboard from one process. Provision a team with `inkwell add-team <name>` (run via `docker exec`, see [`src/cli.py`](src/cli.py)) to get back its API key, then point each team's agent at `/mcp` with that key as a bearer token:
 
 ```bash
-claude mcp add --transport http engram https://your-host/mcp \
+claude mcp add --transport http inkwell https://your-host/mcp \
   --header "Authorization: Bearer <TEAM_API_KEY>"
 ```
 
@@ -200,7 +202,7 @@ Or as a raw `mcpServers` config (Claude Desktop and other clients):
 ```json
 {
   "mcpServers": {
-    "engram": {
+    "inkwell": {
       "type": "http",
       "url": "https://your-host/mcp",
       "headers": {
@@ -248,16 +250,16 @@ A web UI for visually exploring and hand-editing the same knowledge base the MCP
 Disabled by default (the container only runs the MCP server). Enable it as a second process in the same container:
 
 ```bash
-docker run -d --name engram \
-  -e ENGRAM_ENABLE_DASHBOARD=1 \
+docker run -d --name inkwell \
+  -e INKWELL_ENABLE_DASHBOARD=1 \
   -p 8192 -p 8193 \
   -v ./knowledge:/knowledge \
-  foreigndmitryi/engram --transport sse
+  foreigndmitryi/inkwell-memory --transport sse
 
-docker port engram 8193   # dashboard host port
+docker port inkwell 8193   # dashboard host port
 ```
 
-Or run it standalone locally: `python -m dashboard` (see [Configuration](#configuration) for `ENGRAM_DASHBOARD_HOST`/`ENGRAM_DASHBOARD_PORT`).
+Or run it standalone locally: `python -m dashboard` (see [Configuration](#configuration) for `INKWELL_DASHBOARD_HOST`/`INKWELL_DASHBOARD_PORT`).
 
 ## Graph Relations
 
@@ -295,23 +297,23 @@ Ask your agent:
 
 > "Remember that our API runs on port 8080 and depends on PostgreSQL 15."
 
-Engram creates a Markdown file with a unique UUID, indexes it, and confirms. The agent can now recall this fact in any future session.
+Inkwell creates a Markdown file with a unique UUID, indexes it, and confirms. The agent can now recall this fact in any future session.
 
 ### Search
 
 > "What do we know about PostgreSQL?"
 
-Engram searches across all entries by content, title, and tags. Results are ranked by relevance.
+Inkwell searches across all entries by content, title, and tags. Results are ranked by relevance.
 
 ### Navigate the graph
 
 > "What depends on PostgreSQL?"
 
-If entries link to the PostgreSQL article with `kb://uuid#depends-on`, Engram returns all backlinks — showing every service that depends on it, without the agent having to search for each one.
+If entries link to the PostgreSQL article with `kb://uuid#depends-on`, Inkwell returns all backlinks — showing every service that depends on it, without the agent having to search for each one.
 
 ### Share knowledge across agents
 
-Start Engram with SSE or HTTP transport. Multiple agents — even from different providers (Claude, ChatGPT, Copilot) — connect to the same server. What one agent remembers, all others can recall.
+Start Inkwell with SSE or HTTP transport. Multiple agents — even from different providers (Claude, ChatGPT, Copilot) — connect to the same server. What one agent remembers, all others can recall.
 
 ```
 Agent A: "Remember that the deploy key rotates every 90 days."
@@ -321,20 +323,20 @@ Agent B: "When does the deploy key expire?"
 
 ## Prompt Your Agent
 
-Add this to your system prompt or project instructions to make your agent use Engram as a reflex, not an afterthought:
+Add this to your system prompt or project instructions to make your agent use Inkwell as a reflex, not an afterthought:
 
 ```
-Engram is your persistent memory. Using it is mandatory, not optional.
+Inkwell is your persistent memory. Using it is mandatory, not optional.
 
-Engram stores ZERO discoverable information. If you can derive it from
+Inkwell stores ZERO discoverable information. If you can derive it from
 code, git history, configuration files, or existing documentation, it
-does not belong in Engram. Engram captures decisions and their context,
+does not belong in Inkwell. Inkwell captures decisions and their context,
 diagnostics and their root causes, procedures learned the hard way —
 the kind of knowledge that is lost when a conversation ends.
 
-Before working on any topic: search Engram first. Always. Even if you think you know.
+Before working on any topic: search Inkwell first. Always. Even if you think you know.
 Before answering a question about infrastructure or architecture: search first.
-Before proposing a solution: check if a past decision exists in Engram.
+Before proposing a solution: check if a past decision exists in Inkwell.
 
 After resolving a diagnostic: remember the root cause and the fix.
 After executing a procedure: remember the steps.
@@ -342,11 +344,11 @@ After making an architecture decision: remember the choice and the rationale.
 After discovering something about the infrastructure: remember it.
 ```
 
-A system prompt is easy to forget mid-session. [`plugins/engram-hooks/`](plugins/engram-hooks/) ships a self-contained plugin (`SessionStart`, `Stop`, `SessionEnd`, `PreToolUse` handlers, plus a Claude-Code-only `engram-project-onboarder` agent) that mechanically nudges the agent to search Engram before starting work and reminds it to `remember` non-trivial changes before finishing, instead of relying on it recalling this section unprompted. Works in both Claude Code and Codex — install with `/plugin marketplace add <this-repo>` then `/plugin install engram-hooks@engram-memory` (Claude Code), or `codex plugin marketplace add <this-repo>/plugins` then `codex plugin add engram-hooks@engram-memory` (Codex) — see [`plugins/engram-hooks/README.md`](plugins/engram-hooks/README.md) for what each hook does and the full install flow.
+A system prompt is easy to forget mid-session. [`plugins/inkwell-hooks/`](plugins/inkwell-hooks/) ships a self-contained plugin (`SessionStart`, `Stop`, `SessionEnd`, `PreToolUse` handlers, plus a Claude-Code-only `inkwell-project-onboarder` agent) that mechanically nudges the agent to search Inkwell before starting work and reminds it to `remember` non-trivial changes before finishing, instead of relying on it recalling this section unprompted. Works in both Claude Code and Codex — install with `/plugin marketplace add <this-repo>` then `/plugin install inkwell-hooks@inkwell-memory` (Claude Code), or `codex plugin marketplace add <this-repo>/plugins` then `codex plugin add inkwell-hooks@inkwell-memory` (Codex) — see [`plugins/inkwell-hooks/README.md`](plugins/inkwell-hooks/README.md) for what each hook does and the full install flow.
 
 ### Disable Claude Code's built-in auto memory
 
-Claude Code ships its own automatic memory (`MEMORY.md` under `~/.claude/projects/<project>/memory/`, loaded every session). Running it alongside Engram means two systems writing overlapping notes and competing for the agent's attention, which gets in the way more than it helps. Turn it off in `settings.json`:
+Claude Code ships its own automatic memory (`MEMORY.md` under `~/.claude/projects/<project>/memory/`, loaded every session). Running it alongside Inkwell means two systems writing overlapping notes and competing for the agent's attention, which gets in the way more than it helps. Turn it off in `settings.json`:
 
 ```json
 {
@@ -358,19 +360,19 @@ Or via environment variable (takes precedence over the setting and the `/memory`
 
 ## Configuration
 
-All options have `ENGRAM_*` environment variable fallbacks. CLI args take priority.
+All options have `INKWELL_*` environment variable fallbacks. CLI args take priority.
 
 | Option | Env var | Default | Description |
 |--------|---------|---------|-------------|
-| `--data-path` | `ENGRAM_DATA_PATH` | `/knowledge` | Root path for knowledge data |
-| `--transport` | `ENGRAM_TRANSPORT` | `stdio` | MCP transport |
-| `--host` | `ENGRAM_HOST` | `0.0.0.0` | Listen address (SSE/HTTP) |
-| `--port` | `ENGRAM_PORT` | `8192` | Listen port (SSE/HTTP) |
-| `--embedding-model` | `ENGRAM_EMBEDDING_MODEL` | `minishlab/potion-multilingual-128M` | Model2Vec model for semantic search |
-| — | `ENGRAM_ENABLE_DASHBOARD` | unset (off) | Truthy (`1`/`true`/`yes`) starts the dashboard as a second process alongside the MCP server |
-| `--host` (dashboard) | `ENGRAM_DASHBOARD_HOST` | `0.0.0.0` | Dashboard listen address |
-| `--port` (dashboard) | `ENGRAM_DASHBOARD_PORT` | `8193` | Dashboard listen port (first free port at or above this is used) |
-| — | `ENGRAM_QUERY_LOG` | unset (off) | File path; when set, `search`/`recall` append a JSONL trace of each call for retrieval-quality analysis |
+| `--data-path` | `INKWELL_DATA_PATH` | `/knowledge` | Root path for knowledge data |
+| `--transport` | `INKWELL_TRANSPORT` | `stdio` | MCP transport |
+| `--host` | `INKWELL_HOST` | `0.0.0.0` | Listen address (SSE/HTTP) |
+| `--port` | `INKWELL_PORT` | `8192` | Listen port (SSE/HTTP) |
+| `--embedding-model` | `INKWELL_EMBEDDING_MODEL` | `minishlab/potion-multilingual-128M` | Model2Vec model for semantic search |
+| — | `INKWELL_ENABLE_DASHBOARD` | unset (off) | Truthy (`1`/`true`/`yes`) starts the dashboard as a second process alongside the MCP server |
+| `--host` (dashboard) | `INKWELL_DASHBOARD_HOST` | `0.0.0.0` | Dashboard listen address |
+| `--port` (dashboard) | `INKWELL_DASHBOARD_PORT` | `8193` | Dashboard listen port (first free port at or above this is used) |
+| — | `INKWELL_QUERY_LOG` | unset (off) | File path; when set, `search`/`recall` append a JSONL trace of each call for retrieval-quality analysis |
 
 ## Storage Format
 
@@ -390,20 +392,20 @@ Markdown content here...
 
 `type` is required on every `remember` call (a dedicated field, not part of `tags`) — it classifies the entry (`hub`, `decision`, `diagnostic`, `procedure`, `preference`, `snippet`, ...) and is filterable via `search`/`list`. `resource` is optional: a canonical file/folder path the entry describes. Legacy entries written before these fields existed still read fine.
 
-The search index is a rebuildable cache at `<data-path>/index/engram.db`. Delete it and `rebuild` — no data is ever lost. `rebuild` also reports schema-conformance warnings (missing `type`, malformed `resource`) across existing entries.
+The search index is a rebuildable cache at `<data-path>/index/inkwell.db`. Delete it and `rebuild` — no data is ever lost. `rebuild` also reports schema-conformance warnings (missing `type`, malformed `resource`) across existing entries.
 
 ## Development
 
 ```bash
 # Build
-docker build -t engram .
+docker build -t inkwell .
 
 # Test (separate Dockerfile — pytest/tests/ never ship in the production image)
-docker build -f tests/Dockerfile -t engram-test .
-docker run --rm engram-test
+docker build -f tests/Dockerfile -t inkwell-test .
+docker run --rm inkwell-test
 
 # Run locally (SSE)
-docker run -d --name engram -p 8192 -v ./knowledge:/knowledge engram --transport sse
+docker run -d --name inkwell -p 8192 -v ./knowledge:/knowledge inkwell --transport sse
 ```
 
 ## License

@@ -1,7 +1,7 @@
 """
 Team admin store — multi-tenant API-key -> data-folder registry.
 
-Backs multi-tenant mode (ENGRAM_MULTI_TENANT): one SQLite database
+Backs multi-tenant mode (INKWELL_MULTI_TENANT): one SQLite database
 (<data_path>/admin.db) mapping a hashed API key to a team's data folder
 name under <data_path>/teams/. Only used when multi-tenant mode is on —
 single-tenant/stdio deployments never touch this module.
