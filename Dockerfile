@@ -15,6 +15,10 @@
 
 FROM ghcr.io/astral-sh/uv:python3.13-alpine
 
+# Proves to the MCP Server Registry that this image belongs to the server
+# published under that name; the two must stay identical or publishing fails.
+LABEL io.modelcontextprotocol.server.name="io.github.veronchenko/inkwell-memory"
+
 WORKDIR /app
 
 # Non-root user, created up front so the model cache below can be written
