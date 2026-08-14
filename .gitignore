@@ -13,4 +13,5 @@ external_research/
 eval/
 scripts/
 scratchpad/
-.impeccable/
+.impeccable/plugins/
+plugins/inkwell-pi/
