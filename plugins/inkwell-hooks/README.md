@@ -5,9 +5,7 @@ that mechanically nudges an agent to use the Inkwell MCP memory server,
 instead of relying on it remembering an INKWELL_SPEC.md instruction every
 turn. The search-reminder prompt (`inkwell_session_start.py`) mirrors the
 "When to search"/"Project hygiene" rules in `~/.claude/INKWELL_SPEC.md` —
-update both together when that file changes. The write-trigger list in
-`inkwell_stop_prompt.py`'s self-report prompt is hook-owned, not sourced
-from INKWELL_SPEC.md (which has no "when to write" section).
+update both together when that file changes.
 
 One plugin serves both agents: Codex's plugin loader discovers
 `.claude-plugin/plugin.json` as a documented OOTB-compatibility fallback (it
@@ -29,9 +27,7 @@ plugins/
     │   ├── hooks.json                <- event → command wiring
     │   ├── inkwell_remember_gate.py
     │   ├── inkwell_session_start.py
-    │   ├── inkwell_change_tracker.py
     │   ├── inkwell_cost_tracker.py
-    │   ├── inkwell_stop_prompt.py
     │   ├── inkwell_session_end_cleanup.py
     │   └── _hooklog.py               <- shared debug-logging helper
     ├── agents/
@@ -70,7 +66,7 @@ without the script: copy that file to `~/.codex/agents/inkwell-project-onboarder
 
 - **`INKWELL_SPEC.md`** — verbatim copy of `~/.claude/INKWELL_SPEC.md`, the
   global instructions file that defines the "when to search"/"when to write"
-  rules the six hooks below mechanically enforce. Kept here so the hook
+  rules the hooks below mechanically enforce. Kept here so the hook
   logic and the policy it's enforcing sit side by side for reading.
   **The live file is `~/.claude/INKWELL_SPEC.md`** — this copy is read-only
   reference. It pulls in `@INKWELL_TEMPLATES.md` for the entry-type table and
@@ -90,7 +86,7 @@ without the script: copy that file to `~/.codex/agents/inkwell-project-onboarder
 as a Claude Code plugin agent it loads directly from here, so there's only
 one live copy.
 
-## The six hooks
+## The four hooks
 
 Defined in `hooks/hooks.json`:
 
@@ -102,22 +98,13 @@ Defined in `hooks/hooks.json`:
   the call (`permissionDecision: "deny"`) if it's not set, telling the model
   to search first. Session-level gate — any prior search/recall in the
   session satisfies it, regardless of topic. On a successful `remember` it
-  also resets both Stop-hook counters (see below) — a remember satisfies
-  whichever trigger was accumulating, whether or not either had actually
-  reached its threshold yet — and increments `remembers_count` /
-  `last_remember_ts`, which `inkwell_statusline.py` displays.
+  also increments `remembers_count` / `last_remember_ts`, which
+  `inkwell_statusline.py` displays.
 - **`SessionStart`** (`inkwell_session_start.py`) — fires once per new
   session, unconditionally reminds to search Inkwell
   (`mcp__inkwell__search`/`recall`) before starting work, per the "When to
   search Inkwell" rule (mandatory, every request, not conditional on
   relevance).
-- **`PostToolUse`** (`inkwell_change_tracker.py`, matcher
-  `Edit|Write|NotebookEdit|Bash`) — increments the per-session `change_count`
-  field on every `Edit`/`Write`/`NotebookEdit` call, and on `Bash` only when
-  the command matches `git commit`. One tool call = +1, uniformly — not
-  weighted by diff size, not deduplicated per file. Research/web tools
-  (`WebSearch`, `WebFetch`, context7) are deliberately not counted, to keep
-  the signal restricted to actual code/config changes.
 - **`PostToolUse`** (`inkwell_cost_tracker.py`, no matcher — every tool call)
   — accumulates `tokens_in`/`tokens_out`/`cost_usd` into the per-session
   state whenever a PostToolUse payload carries `total_cost_usd`/
@@ -126,25 +113,6 @@ Defined in `hooks/hooks.json`:
   v1 — no join with Inkwell's own `query_log`, no network call. Not surfaced
   in the statusline (see below) — the data is written for later local
   inspection, not shown live.
-- **`Stop`** (`inkwell_stop_prompt.py`) — hybrid of two independent triggers,
-  checked in this order:
-  1. **Change-counter** (mechanical): if `change_count` has reached
-     `INKWELL_CHANGE_THRESHOLD` (default 15), blocks with a reason stating
-     the fact plainly ("N file-editing tool calls since the last remember")
-     but, like the self-report reason, still lets the model decide nothing
-     is worth remembering and proceed — `remember` is not mandatory just
-     because edits happened.
-  2. **Self-report** (judgment-based): otherwise, blocks every
-     `INKWELL_STOP_INTERVAL`-th Stop event (default 5) and asks the model to
-     review the transcript against the "When to write to Inkwell" trigger
-     list (built/changed something, chose among alternatives, learned
-     something non-obvious, resolved a diagnostic, ran a procedure,
-     captured a preference, wrote a reusable snippet). This is the only
-     backstop for work the change-counter structurally can't see — a
-     decision made purely in conversation, with no tool call at all.
-
-  Whichever trigger fires resets **both** counters, so the two mechanisms
-  never double-block back-to-back for the same underlying work.
 - **`SessionEnd`** (`inkwell_session_end_cleanup.py`) — fires when the
   session actually ends (not on every Stop) and deletes that session's
   state file (see below), so the temp dir doesn't accumulate stale files per
@@ -159,29 +127,25 @@ Defined in `hooks/hooks.json`:
   worth a workaround, since they're tiny and the OS temp dir clears
   periodically anyway.
 
-All six hooks are plain Python command scripts (`type: "command"`), not
+All four hooks are plain Python command scripts (`type: "command"`), not
 `type: "prompt"` hooks — `SessionStart` and `SessionEnd` aren't in Claude
-Code's prompt-hook-supported event list, and `Stop`/`PreToolUse`/
-`PostToolUse` need persisted state (the per-session stop counter, change
-counter, and searched flag) that a stateless prompt hook can't keep. These
-hooks share that state through `_session_state.py`: one JSON file per
-session under the system temp dir (`inkwell_session_<session_id>.json`,
-holding `change_count`, `stop_count`, `searched`, `remembers_count`,
+Code's prompt-hook-supported event list, and `PreToolUse`/`PostToolUse`
+need persisted state (the searched flag, the cost totals) that a stateless
+prompt hook can't keep. These hooks share that state through
+`_session_state.py`: one JSON file per session under the system temp dir
+(`inkwell_session_<session_id>.json`, holding `searched`, `remembers_count`,
 `last_remember_ts`, `tokens_in`, `tokens_out`, `cost_usd`), since each hook
-invocation is a fresh process with no memory of prior calls. Override the
-Stop interval with
-`INKWELL_STOP_INTERVAL` and the change threshold with
-`INKWELL_CHANGE_THRESHOLD`. Skip the SessionStart reminder only with
-`INKWELL_SESSION_START_DISABLE=1` — it does not silence the other five
-hooks.
+invocation is a fresh process with no memory of prior calls. Skip the
+SessionStart reminder only with `INKWELL_SESSION_START_DISABLE=1` — it does
+not silence the other three hooks.
 
 ## Status line
 
 `hooks/inkwell_statusline.py` renders this workflow's live state in Claude
 Code's status bar: model, git branch, context-window usage (`used_percentage`
-plus a token count from `context_window`), and the same `change_count`/
-`stop_count`/`remembers_count` fields the hooks above maintain — e.g.
-`[Sonnet 5] | 🌿 main | 34% · 68k/200k tok | 🧠 4/15 | 📝 2/5 | 💾 2 remembers`.
+plus a token count from `context_window`), and the `remembers_count` field
+the gate hook maintains — e.g.
+`[Sonnet 5] | 🌿 main | 34% · 68k/200k tok | 💾 2 remembers`.
 `inkwell_cost_tracker.py`'s `tokens_in`/`tokens_out`/`cost_usd` fields are
 written to the same state file but deliberately not shown here.
 
@@ -315,7 +279,6 @@ Sanity check after installing: start a session and confirm
 `hooks/logs/debug.log` (next to the scripts, inside the installed plugin's
 cache directory) gets a `session_start` line; call `remember` before ever
 calling `search`/`recall` and confirm it's denied; call `search` and retry
-`remember` and confirm it now succeeds; make 15 Edit calls in a row and
-confirm Stop blocks with the change-counter reason before finishing; end the
+`remember` and confirm it now succeeds; end the
 session and confirm `inkwell_session_<session_id>.json` in the system temp
 dir is gone afterward (Claude Code only — see the Codex gap above).

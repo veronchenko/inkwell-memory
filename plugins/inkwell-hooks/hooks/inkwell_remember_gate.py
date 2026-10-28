@@ -9,10 +9,9 @@ search first. This is a session-level gate (any prior search/recall in the
 session satisfies it) — it does not check topical relevance between the
 search and the remember.
 
-On a successful remember it also resets inkwell_stop_prompt.py's counters
-(a remember satisfies whichever trigger was accumulating) and bumps
-remembers_count / last_remember_ts, which the statusline script reads —
-all via the shared per-session state in _session_state.py.
+On a successful remember it also bumps remembers_count / last_remember_ts,
+which the statusline script reads — via the shared per-session state in
+_session_state.py.
 """
 
 import json
@@ -59,12 +58,10 @@ def main() -> None:
     if tool_name == REMEMBER_TOOL:
         session_state = state.load(session_id)
         if session_state["searched"]:
-            session_state["change_count"] = 0
-            session_state["stop_count"] = 0
             session_state["remembers_count"] += 1
             session_state["last_remember_ts"] = time.time()
             state.save(session_id, session_state)
-            log("PreToolUse", f"session={session_id} remember allowed, stop counters reset, remembers_count={session_state['remembers_count']}")
+            log("PreToolUse", f"session={session_id} remember allowed, remembers_count={session_state['remembers_count']}")
             return
         log("PreToolUse", f"session={session_id} remember denied, no prior search/recall")
         print(json.dumps({

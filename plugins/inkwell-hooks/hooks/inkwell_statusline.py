@@ -13,11 +13,9 @@ reference), so a plugin cannot auto-register this. Point your own
 
 Reads the statusline JSON payload Claude Code sends on stdin (model,
 workspace, context_window, session_id) plus this session's Inkwell hook
-state (_session_state.py, written by inkwell_change_tracker.py,
-inkwell_stop_prompt.py, and inkwell_remember_gate.py) to show: model, git
-branch, context-window usage (percent + token count), change-counter and
-self-report progress toward their thresholds, and remembers written this
-session. inkwell_cost_tracker.py also writes tokens_in/tokens_out/cost_usd
+state (_session_state.py, written by inkwell_remember_gate.py) to show:
+model, git branch, context-window usage (percent + token count), and
+remembers written this session. inkwell_cost_tracker.py also writes tokens_in/tokens_out/cost_usd
 into the same state file, but this script deliberately doesn't surface
 them — cost tracking stays local-only data, not a statusline metric.
 """
@@ -36,9 +34,6 @@ import _session_state as state
 # and raises UnicodeEncodeError. Force UTF-8 regardless of platform/codepage.
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
-
-CHANGE_THRESHOLD = int(os.environ.get("INKWELL_CHANGE_THRESHOLD", "15"))
-STOP_INTERVAL = int(os.environ.get("INKWELL_STOP_INTERVAL", "5"))
 
 
 def _git_branch(cwd: str) -> str | None:
@@ -83,8 +78,6 @@ def main() -> None:
         segments.append(f"{used_pct:.0f}% · {_format_tokens(used_tokens)}/{_format_tokens(size)} tok")
 
     session_state = state.load(session_id)
-    segments.append(f"\U0001f9e0 {session_state['change_count']}/{CHANGE_THRESHOLD}")
-    segments.append(f"\U0001f4dd {session_state['stop_count']}/{STOP_INTERVAL}")
     segments.append(f"\U0001f4be {session_state['remembers_count']} remembers")
 
     print(" | ".join(segments))

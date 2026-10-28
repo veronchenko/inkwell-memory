@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """SessionEnd hook: delete this session's hook state file.
 
-inkwell_stop_prompt.py, inkwell_change_tracker.py, and inkwell_remember_gate.py
-all persist per-session counters/flags via the shared _session_state.py
+inkwell_remember_gate.py and inkwell_cost_tracker.py persist per-session
+flags/counters via the shared _session_state.py
 (one JSON file per session under the system temp dir — see its docstring).
 SessionEnd hooks can't block session termination or talk to Claude, only
 run cleanup, so this just removes that file. Fails open silently — a

@@ -1,7 +1,7 @@
 {
   "name": "inkwell-hooks",
-  "version": "2.0.0",
-  "description": "Nudges Claude Code / Codex to actually use the Inkwell MCP memory server — search before starting work, and remember non-trivial changes before finishing.",
+  "version": "2.1.0",
+  "description": "Nudges Claude Code / Codex to actually use the Inkwell MCP memory server — search before starting work, and search before remembering.",
   "author": {
     "name": "veronchenko"
   },
@@ -18,7 +18,7 @@
   "interface": {
     "displayName": "Inkwell Hooks",
     "shortDescription": "Nudges agents to actually use the Inkwell MCP memory server",
-    "longDescription": "Mechanically enforces the Inkwell memory workflow instead of relying on the model to self-police it: blocks `remember` until a `search`/`recall` has run this session, reminds to search at session start, and prompts a self-report before Stop once enough file-editing tool calls have accumulated since the last remember. Installable in both Claude Code and Codex from the same manifest.",
+    "longDescription": "Mechanically enforces the Inkwell memory workflow instead of relying on the model to self-police it: blocks `remember` until a `search`/`recall` has run this session and reminds to search at session start. Installable in both Claude Code and Codex from the same manifest.",
     "developerName": "veronchenko",
     "category": "Productivity",
     "capabilities": [

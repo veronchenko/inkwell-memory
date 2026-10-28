@@ -1,11 +1,9 @@
 """Shared per-session state store for the Inkwell hooks in this folder.
 
-Replaces the earlier one-counter-per-file scheme (a separate change_count /
-stop_count / searched text file each) with a single JSON file per session
-under the system temp dir, so a hook that needs more than one field
-(the statusline script wants remembers_count and last_remember_ts alongside
-the existing counters, inkwell_cost_tracker.py wants tokens_in/tokens_out/
-cost_usd) doesn't need yet another file.
+One JSON file per session under the system temp dir, so a hook that needs
+more than one field (the gate's searched flag, the statusline's
+remembers_count and last_remember_ts, inkwell_cost_tracker.py's tokens_in/
+tokens_out/cost_usd) doesn't need a file of its own.
 
 Each hook invocation is a fresh process with no memory of prior calls, so
 load()/save() always round-trip through disk. Callers own their own
@@ -20,8 +18,6 @@ import os
 import tempfile
 
 DEFAULTS = {
-    "change_count": 0,
-    "stop_count": 0,
     "searched": False,
     "remembers_count": 0,
     "last_remember_ts": None,
