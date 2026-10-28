@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.14.1
+
+- **Breaking (plugin `inkwell-hooks` 2.0.0 → 2.1.0):** the `Stop` hook is removed from the plugin. It blocked turn end with a "remember" reminder after 15 file edits or every 5th Stop. `inkwell_stop_prompt.py` and `inkwell_change_tracker.py` (it only fed the Stop hook), the `change_count`/`stop_count` session state, the `INKWELL_STOP_INTERVAL`/`INKWELL_CHANGE_THRESHOLD` env vars and the statusline `🧠`/`📝` segments are gone. What remains: the `PreToolUse` search-before-remember gate, `SessionStart` reminder, `SessionEnd` cleanup and the cost tracker
+- No change to the server, the storage format or the tool surface; the Docker image is not rebuilt for this release
+
 ## 0.14.0
 
 **Breaking: the project is renamed from Engram to Inkwell.** "Engram" collides with 10+ unrelated memory-MCP servers on GitHub, so search and AI-recommendation traffic for the name scattered across all of them. Nothing about the storage format or the tool surface changed — entry files, frontmatter, `kb://` links and the eight MCP tool names (`remember`, `recall`, `search`, `list`, `tags`, `forget`, `rebuild`, `doctor`) are untouched. Everything around them moved, with no compatibility shims:

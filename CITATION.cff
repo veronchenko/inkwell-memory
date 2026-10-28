@@ -7,8 +7,8 @@ authors:
 repository-code: "https://github.com/veronchenko/inkwell-memory"
 url: "https://hub.docker.com/r/foreigndmitryi/inkwell-memory"
 license: MIT
-version: "0.14.0"
-date-released: "2026-08-15"
+version: "0.14.1"
+date-released: "2026-10-28"
 keywords:
   - mcp
   - model-context-protocol
